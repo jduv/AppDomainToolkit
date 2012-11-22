@@ -13,7 +13,6 @@
 
         private readonly AppDomain domain;
         private readonly Remote<AssemblyTargetLoader> loaderProxy;
-        private readonly Guid domainName;
 
         #endregion
 
@@ -26,31 +25,27 @@
         /// AssemblyLoader object into context. From here, add whatever assembly probe paths you wish in order to
         /// resolve remote proxies, or extend this class if you desire more specific behavior.
         /// </summary>
-        public AppDomainContext()
+        /// <param name="setupInfo">
+        /// The setup information.
+        /// </param>
+        private AppDomainContext(AppDomainSetup setupInfo)
         {
-            this.domainName = Guid.NewGuid();
-            this.Resolver  = new PathBasedAssemblyResolver();
+            this.UniqueId = Guid.NewGuid();
+            this.Resolver = new PathBasedAssemblyResolver();
 
-            var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var setupInfo = new AppDomainSetup()
-            {
-                ApplicationName = "WinBert-Temp-Domain-" + this.domainName,
-                ApplicationBase = rootDir,
-                PrivateBinPath = rootDir
-            };
-
-            // Add the root directory for this assembly to the resolver.
-            this.Resolver.AddProbePath(rootDir);
+            // Add some root directories to resolve some required assemblies
+            this.Resolver.AddProbePath(setupInfo.ApplicationBase);
+            this.Resolver.AddProbePath(setupInfo.PrivateBinPath);
+            this.Resolver.AddProbePath(setupInfo.PrivateBinPath);
 
             // Create the new domain.
             this.domain = AppDomain.CreateDomain(
-                this.domainName.ToString(),
+                this.UniqueId.ToString(),
                 null,
                 setupInfo);
 
             this.domain.AssemblyResolve += this.Resolver.Resolve;
             AppDomain.CurrentDomain.AssemblyResolve += this.Resolver.Resolve;
-
 
             // Create a remote for an assembly loader.
             this.loaderProxy = Remote<AssemblyTargetLoader>.CreateProxy(this.domain);
@@ -72,13 +67,7 @@
         /// <summary>
         /// Gets a unique ID assigned to the environment. Useful for dictionary keys.
         /// </summary>
-        public Guid UniqueId
-        {
-            get
-            {
-                return this.domainName;
-            }
-        }
+        public Guid UniqueId { get; private set; }
 
         /// <inheritdoc />
         public IAssemblyResolver Resolver { get; private set; }
@@ -86,6 +75,45 @@
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
+        public static AppDomainContext Create()
+        {
+            var guid = Guid.NewGuid();
+            var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var setupInfo = new AppDomainSetup()
+            {
+                ApplicationName = "Temp-Domain-" + guid,
+                ApplicationBase = rootDir,
+                PrivateBinPath = rootDir
+            };
+
+            return Create(setupInfo, guid);
+        }
+
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="setupInfo">
+        /// The setup info.
+        /// </param>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
+        public static AppDomainContext Create(AppDomainSetup setupInfo)
+        {
+            var guid = Guid.NewGuid();
+            setupInfo.ApplicationName = string.IsNullOrEmpty(setupInfo.ApplicationName) ?
+                "Temp-Domain-" + guid.ToString() :
+                setupInfo.ApplicationName;
+
+            return Create(setupInfo, guid);
+        }
 
         /// <inheritdoc />
         public void Dispose()
@@ -106,6 +134,27 @@
         public IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null)
         {
             return this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, assemblyPath, pdbPath);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="setupInfo">
+        /// The setup info.
+        /// </param>
+        /// <param name="uniqueId">
+        /// The unique ID.
+        /// </param>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
+        private static AppDomainContext Create(AppDomainSetup setupInfo, Guid uniqueId)
+        {
+            return new AppDomainContext(setupInfo) { UniqueId = uniqueId };
         }
 
         #endregion

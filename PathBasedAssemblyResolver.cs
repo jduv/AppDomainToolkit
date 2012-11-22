@@ -79,15 +79,13 @@
         /// <inheritdoc />
         public void AddProbePath(string path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
-                throw new ArgumentException("Path cannot be null or empty!");
-            }
-
-            var dir = new DirectoryInfo(path);
-            if (!this.probePaths.Contains(dir.FullName))
-            {
-                this.probePaths.Add(dir.FullName);
+                var dir = new DirectoryInfo(path);
+                if (!this.probePaths.Contains(dir.FullName))
+                {
+                    this.probePaths.Add(dir.FullName);
+                }
             }
         }
 
