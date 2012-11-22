@@ -14,6 +14,15 @@ in my own research projects I decided to build a small library that provided som
 1. Ability to set up transient app domains that easily tear themselves down.
 2. Ability to execute remote delegates in an arbitrary app domain.
 
+INSTALLING
+----------
+
+#### Install via the package manager prompt:
+```PM> Install-Package AppDomainToolkit```
+
+You may also search the package gallery for ```AppDomainToolkit``` and it should show up. Click install and you're all
+set.
+
 IMPLEMENTATION NOTES
 --------------------
 There are a couple of things to be aware of when utilizing the library. Most of them are non-issues as long as you
