@@ -12,7 +12,7 @@
     /// <typeparam name="T">
     /// The type of object to import. Must be a deriviative of MarshalByRefObject.
     /// </typeparam>
-    internal sealed class Remote<T> : IDisposable where T : MarshalByRefObject
+    public sealed class Remote<T> : IDisposable where T : MarshalByRefObject
     {
         #region Constructors & Destructors
 
