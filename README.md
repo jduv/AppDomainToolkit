@@ -127,9 +127,10 @@ Function arguments passed to Invoke _must_ be serializable.
 
 #### Execute a function with my own custom serializable types:
 ```c#
+Reply reply = null;
 using(var context = AppDomainContext.Create())
 {
-    var result = RemoteFunc.Invoke(
+    reply = RemoteFunc.Invoke(
         context.Domain,
         new Request("Hello World"),
         (request) =>
@@ -140,6 +141,10 @@ using(var context = AppDomainContext.Create())
 
         });
 }
+
+// Since the reply is serializable, you can use it after the domain has
+// been unloaded! This is super powerful!
+Console.WriteLine(reply.Message);
 
 [Serializable]
 public class Request
@@ -201,20 +206,22 @@ outside the ```using``` block. If you wish to persist a remote object longer, ch
 
 #### Create a persistant remote proxy
 ```c#
-var appdomain = AppDomain.Create("My domain");
+var context = AppDomainContext.Create()
 
 // The second arg is ctor arguments.
-var remoteGreeter = Remote<RemoteGreeter>.CreateProxy(appdomain, "Hello");
+var remoteGreeter = Remote<RemoteGreeter>.CreateProxy(context.Domain, "Hello");
 
 remoteGreeger.SayHello("jduv");
-AppDomain.Unload(appdomain);
+
+// Eventually, it's a good idea to unload the app domain.
+AppDomain.Unload(context.Domain);
 ```
 
 ```c#
-var appdomain = AppDomain.Create("My domain");
+var context = AppDomainContext.Create();
 
 // Alternatively, you can place a proxy into a using block for automatic disposal.
-using(var remoteGreeter = Remote.RemoteGreeter>.CreateProxy(appdomain, "Hello"))
+using(var remoteGreeter = Remote.<RemoteGreeter>.CreateProxy(context.Domain, "Hello"))
 {
     remoteGreeter.SayHello("jduv");
 }
