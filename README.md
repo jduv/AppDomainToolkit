@@ -211,7 +211,7 @@ var context = AppDomainContext.Create()
 // The second arg is ctor arguments.
 var remoteGreeter = Remote<Greeter>.CreateProxy(context.Domain, "Hello");
 
-remoteGreeger.SayHello("jduv");
+remoteGreeter.SayHello("jduv");
 
 // Eventually, it's a good idea to unload the app domain.
 AppDomain.Unload(context.Domain);
