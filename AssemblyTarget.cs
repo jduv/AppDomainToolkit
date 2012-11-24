@@ -48,7 +48,7 @@
                 throw new ArgumentNullException("assembly");
             }
 
-            return Create(assembly.Location);
+            return FromPath(assembly.Location);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@
         /// <returns>
         /// An AssemblyTarget.
         /// </returns>
-        public static IAssemblyTarget Create(string location)
+        public static IAssemblyTarget FromPath(string location)
         {
             if (string.IsNullOrEmpty(location))
             {

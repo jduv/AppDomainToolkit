@@ -145,8 +145,8 @@ using(var context = AppDomainContext.Create())
 // Since the reply is serializable, you can use it after the domain has
 // been unloaded! This is super powerful!
 Console.WriteLine(reply.Message);
-
-[Serializable]
+Serializable
+[]
 public class Request
 {
     public Request(string message)
