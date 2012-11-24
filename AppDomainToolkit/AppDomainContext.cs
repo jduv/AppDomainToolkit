@@ -7,11 +7,11 @@
     /// <summary>
     /// Loads assemblies into the contained application domain.
     /// </summary>
-    public class AppDomainContext : IAppDomainContext
+    public sealed class AppDomainContext : IAppDomainContext
     {
         #region Fields & Constants
 
-        private readonly AppDomain domain;
+        private readonly DisposableAppDomain wrappedDomain;
         private readonly Remote<AssemblyTargetLoader> loaderProxy;
 
         #endregion
@@ -38,17 +38,19 @@
             this.Resolver.AddProbePath(setupInfo.PrivateBinPath);
             this.Resolver.AddProbePath(setupInfo.PrivateBinPath);
 
-            // Create the new domain.
-            this.domain = AppDomain.CreateDomain(
-                this.UniqueId.ToString(),
-                null,
-                setupInfo);
+            // Create the new domain and wrap it for disposal.
+            this.wrappedDomain = new DisposableAppDomain(
+                AppDomain.CreateDomain(
+                    this.UniqueId.ToString(),
+                    null,
+                    setupInfo));
 
-            this.domain.AssemblyResolve += this.Resolver.Resolve;
+            this.wrappedDomain.Domain.AssemblyResolve += this.Resolver.Resolve;
             AppDomain.CurrentDomain.AssemblyResolve += this.Resolver.Resolve;
 
             // Create a remote for an assembly loader.
-            this.loaderProxy = Remote<AssemblyTargetLoader>.CreateProxy(this.domain);
+            this.loaderProxy = Remote<AssemblyTargetLoader>.CreateProxy(this.wrappedDomain);
+            this.IsDisposed = false;
         }
 
         #endregion
@@ -60,7 +62,12 @@
         {
             get
             {
-                return this.domain;
+                if (this.IsDisposed)
+                {
+                    throw new ObjectDisposedException("The AppDomain has been unloaded or disposed!");
+                }
+
+                return this.wrappedDomain.Domain;
             }
         }
 
@@ -71,6 +78,9 @@
 
         /// <inheritdoc />
         public IAssemblyResolver Resolver { get; private set; }
+
+        /// <inheritdoc />
+        public bool IsDisposed { get; private set; }
 
         #endregion
 
@@ -93,7 +103,7 @@
                 PrivateBinPath = rootDir
             };
 
-            return Create(setupInfo, guid);
+            return new AppDomainContext(setupInfo) { UniqueId = guid };
         }
 
         /// <summary>
@@ -107,21 +117,39 @@
         /// </returns>
         public static AppDomainContext Create(AppDomainSetup setupInfo)
         {
+            if (setupInfo == null)
+            {
+                throw new ArgumentNullException("setupInfo");
+            }
+
             var guid = Guid.NewGuid();
             setupInfo.ApplicationName = string.IsNullOrEmpty(setupInfo.ApplicationName) ?
                 "Temp-Domain-" + guid.ToString() :
                 setupInfo.ApplicationName;
 
-            return Create(setupInfo, guid);
+            return new AppDomainContext(setupInfo) { UniqueId = guid };
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            if (this.domain != null && !this.domain.IsDefaultAppDomain())
+            if (!this.IsDisposed)
             {
-                AppDomain.Unload(this.domain);
+                if (!this.wrappedDomain.IsDisposed)
+                {
+                    this.wrappedDomain.Dispose();
+                }
+
+                if (!this.loaderProxy.IsDisposed)
+                {
+                    this.loaderProxy.Dispose();
+                }
+
+                this.IsDisposed = true;
             }
+
+            // No subclasses exist, no need to suppress finalizers.
+            //GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />
@@ -134,27 +162,6 @@
         public IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null)
         {
             return this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, assemblyPath, pdbPath);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Creates a new instance of the AppDomainContext class.
-        /// </summary>
-        /// <param name="setupInfo">
-        /// The setup info.
-        /// </param>
-        /// <param name="uniqueId">
-        /// The unique ID.
-        /// </param>
-        /// <returns>
-        /// A new AppDomainContext.
-        /// </returns>
-        private static AppDomainContext Create(AppDomainSetup setupInfo, Guid uniqueId)
-        {
-            return new AppDomainContext(setupInfo) { UniqueId = uniqueId };
         }
 
         #endregion

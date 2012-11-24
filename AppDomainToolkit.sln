@@ -1,9 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainToolkit", "AppDomainToolkit.csproj", "{2A53F4FB-0918-485C-9266-BD8FF3FA0D84}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainToolkit", "AppDomainToolkit\AppDomainToolkit.csproj", "{2A53F4FB-0918-485C-9266-BD8FF3FA0D84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppDomainToolkit.UnitTests", "AppDomainToolkit.UnitTests\AppDomainToolkit.UnitTests.csproj", "{DB6983F9-86EA-4BF3-BE9E-1CCE1918B66E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1785F95D-6FC4-432C-9E7E-015155FC24F5}"
+	ProjectSection(SolutionItems) = preProject
+		AppDomainToolkit.testsettings = AppDomainToolkit.testsettings
+		AppDomainToolkit.vsmdi = AppDomainToolkit.vsmdi
+	EndProjectSection
 EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = AppDomainToolkit.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -13,6 +24,10 @@ Global
 		{2A53F4FB-0918-485C-9266-BD8FF3FA0D84}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{2A53F4FB-0918-485C-9266-BD8FF3FA0D84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A53F4FB-0918-485C-9266-BD8FF3FA0D84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB6983F9-86EA-4BF3-BE9E-1CCE1918B66E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB6983F9-86EA-4BF3-BE9E-1CCE1918B66E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB6983F9-86EA-4BF3-BE9E-1CCE1918B66E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB6983F9-86EA-4BF3-BE9E-1CCE1918B66E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

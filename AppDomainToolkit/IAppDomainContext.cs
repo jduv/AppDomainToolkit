@@ -5,7 +5,7 @@
     /// <summary>
     /// Defines behavior for implementations that load assemblies into a built-in application domain.
     /// </summary>
-    public interface IAppDomainContext : IDisposable
+    public interface IAppDomainContext : AppDomainToolkit.IDisposable
     {
         #region Properties
 

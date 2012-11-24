@@ -44,11 +44,13 @@
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="AssemblyTarget.cs" />
     <Compile Include="AssemblyTargetLoader.cs" />
+    <Compile Include="DisposableAppDomain.cs" />
     <Compile Include="IAppDomainContext.cs" />
     <Compile Include="IAssemblyLoader.cs" />
     <Compile Include="IAssemblyResolver.cs" />
     <Compile Include="IAssemblyTarget.cs" />
     <Compile Include="IAssemblyTargetLoader.cs" />
+    <Compile Include="IDisposable.cs" />
     <Compile Include="PathBasedAssemblyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Remote.cs" />
