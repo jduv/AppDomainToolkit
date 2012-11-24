@@ -178,14 +178,14 @@ using(var context = AppDomainContext.Create())
         "Hello",
         (phrase) =>
         {
-            return new RemoteGreeter(phrase);
+            return new Greeter(phrase);
         });
 
     // Executes in the remote domain.
     result.SayHello("jduv");
 }
 
-public class RemoteGreeter : MarshalByRefObject
+public class Greeter : MarshalByRefObject
 {
     private readonly string helloPhrase;
 
@@ -204,12 +204,12 @@ This code is quite powerful. It will create a remote object and return a handle 
 extends ```MarshalByRefObject```_. It's important to understand here, though, that the remote object won't live
 outside the ```using``` block. If you wish to persist a remote object longer, check out the next example.
 
-#### Create a persistant remote proxy
+#### Create a persistent remote proxy
 ```c#
 var context = AppDomainContext.Create()
 
 // The second arg is ctor arguments.
-var remoteGreeter = Remote<RemoteGreeter>.CreateProxy(context.Domain, "Hello");
+var remoteGreeter = Remote<Greeter>.CreateProxy(context.Domain, "Hello");
 
 remoteGreeger.SayHello("jduv");
 
@@ -221,7 +221,7 @@ AppDomain.Unload(context.Domain);
 var context = AppDomainContext.Create();
 
 // Alternatively, you can place a proxy into a using block for automatic disposal.
-using(var remoteGreeter = Remote.<RemoteGreeter>.CreateProxy(context.Domain, "Hello"))
+using(var remoteGreeter = Remote.<Greeter>.CreateProxy(context.Domain, "Hello"))
 {
     remoteGreeter.SayHello("jduv");
 }
