@@ -20,7 +20,6 @@ using System.Runtime.InteropServices;
 
 // Versioning
 [assembly: AssemblyVersion("1.0.1.2")]
-[assembly: AssemblyFileVersion("1.0.*")]
 
 // Unit tests.
 [assembly: InternalsVisibleTo("AppDomainToolkit.UnitTests")]
