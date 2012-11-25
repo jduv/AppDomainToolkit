@@ -202,7 +202,9 @@ public class Greeter : MarshalByRefObject
 ```
 This code is quite powerful. It will create a remote object and return a handle to it _as long as the remote class
 extends ```MarshalByRefObject```_. It's important to understand here, though, that the remote object won't live
-outside the ```using``` block. If you wish to persist a remote object longer, check out the next example.
+outside the ```using``` block. If you wish to persist a remote object longer, check out the next example. Also note that
+you can pass constructor arguments to the RemoteFunc.Invoke method. It's a simple ```params``` array after the AppDomain
+argument.
 
 #### Create a persistent remote proxy
 ```c#
