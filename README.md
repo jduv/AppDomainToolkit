@@ -105,7 +105,7 @@ using(var context = AppDomainContext.Create())
         });
 }
 ```
-All arguments passed through the static Invoke method _must_ be serializable.
+All arguments passed through the static Invoke method _must_ be serializable or MarshalByRefObject derivatives.
 
 #### Execute a function in a foreign application domain with a return value:
 ```c#
@@ -121,7 +121,7 @@ using(var context = AppDomainContext.Create())
         });
 }
 ```
-Return values can be serializable or MarshalByRefObject derivatives. Pay attention to the lifetime cycle of any objects
+Return values and inputs may be serializable or MarshalByRefObject derivatives. Pay attention to the lifetime cycle of any objects
 marshaled by reference. If the time runs out, then the returned value will be GC'd before you're finished with it.
 Function arguments passed to Invoke _must_ be serializable.
 
