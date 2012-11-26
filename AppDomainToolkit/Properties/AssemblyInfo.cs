@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid("8220c5ce-9cb4-485f-ae78-f2a9f2cbd754")]
 
 // Versioning
-[assembly: AssemblyVersion("1.0.1.3")]
+[assembly: AssemblyVersion("1.0.2.0")]
 
 // Unit tests.
 [assembly: InternalsVisibleTo("AppDomainToolkit.UnitTests")]
