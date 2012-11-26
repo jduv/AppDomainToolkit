@@ -1,4 +1,5 @@
-﻿namespace AppDomainToolkit
+﻿using System;
+namespace AppDomainToolkit
 {
     /// <summary>
     /// This is a basic wrapper around reflection or CCI metadata based assemblies. It, however, allows referencing
@@ -10,10 +11,19 @@
         #region Properties
 
         /// <summary>
-        /// Gets the location of the assembly on disk. Assembly targets should never be dynamic, or
-        /// in-memory assemblies.
+        /// Gets the location of the code base on disk.
+        /// </summary>
+        Uri CodeBase { get; }
+
+        /// <summary>
+        /// Gets the location of the assembly, if applicable.
         /// </summary>
         string Location { get; }
+
+        /// <summary>
+        /// Gets the full name of the assembly target.
+        /// </summary>
+        string FullName { get; }
 
         #endregion
     }

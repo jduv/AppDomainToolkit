@@ -1,6 +1,8 @@
 ﻿namespace AppDomainToolkit
 {
     using System;
+    using System.Linq;
+    using System.Collections.Generic;
 
     /// <summary>
     /// This class exists to prevent DLL hell. Assemblies must be loaded into specific application domains
@@ -47,13 +49,33 @@
         /// <inheritdoc/>
         public IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null)
         {
-            return AssemblyTarget.FromAssembly(this.loader.LoadAssembly(loadMethod, assemblyPath, pdbPath));
+            IAssemblyTarget target = null;
+            var assembly = this.loader.LoadAssembly(loadMethod, assemblyPath, pdbPath);
+            if (loadMethod == LoadMethod.LoadBits)
+            {
+                // Assemlies loaded by bits will have the codebase set to the assembly that loaded it. Set it to the correct path here.
+                var codebaseUri = new Uri(assemblyPath);
+                target = AssemblyTarget.FromPath(codebaseUri, assembly.Location, assembly.FullName);
+            }
+            else
+            {
+                target = AssemblyTarget.FromAssembly(assembly);
+            }
+
+            return target;
         }
 
         /// <inheritdoc/>
-        public IAssemblyTarget LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath)
+        public IEnumerable<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath)
         {
-            throw new NotImplementedException();
+            return this.loader.LoadAssemblyWithReferences(loadMethod, assemblyPath).Select(x => AssemblyTarget.FromAssembly(x));
+        }
+
+        /// <inheritdoc />
+        public IAssemblyTarget[] GetAssemblies()
+        {
+            var assemblies = this.loader.GetAssemblies();
+            return assemblies.Select(x => AssemblyTarget.FromAssembly(x)).ToArray();
         }
 
         #endregion

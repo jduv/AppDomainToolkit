@@ -26,7 +26,13 @@
         #region Properties
 
         /// <inheritdoc />
+        public Uri CodeBase { get; private set; }
+
+        /// <inheritdoc />
         public string Location { get; private set; }
+
+        /// <inheritdoc />
+        public string FullName { get; private set; }
 
         #endregion
 
@@ -48,33 +54,47 @@
                 throw new ArgumentNullException("assembly");
             }
 
-            return FromPath(assembly.Location);
+            var uri = new Uri(assembly.CodeBase);
+            return FromPath(uri, assembly.Location, assembly.FullName);
         }
 
         /// <summary>
         /// Creates a new assembly target for the given location.
         /// </summary>
+        /// <param name="codebase">
+        /// The URI to the code base.
+        /// </param>
         /// <param name="location">
         /// The location. Must be a valid path and an existing file.
+        /// </param>
+        /// <param name="fullname">
+        /// The full name of the assembly.
         /// </param>
         /// <returns>
         /// An AssemblyTarget.
         /// </returns>
-        public static IAssemblyTarget FromPath(string location)
+        public static IAssemblyTarget FromPath(Uri codebase, string location, string fullname)
         {
-            if (string.IsNullOrEmpty(location))
+            if (codebase == null)
             {
-                throw new ArgumentException("Location cannot be null or empty.");
+                throw new ArgumentNullException("Codebase URI cannot be null!");
             }
 
-            if (!File.Exists(location))
+            if (!File.Exists(codebase.LocalPath))
             {
-                throw new ArgumentException("The target location must be an existing file!");
+                throw new FileNotFoundException("The target location must be an existing file!");
+            }
+
+            if (!string.IsNullOrEmpty(location) && !File.Exists(location))
+            {
+                throw new FileNotFoundException("The target location must be an existing file!");
             }
 
             return new AssemblyTarget()
             {
-                Location = location
+                CodeBase = codebase,
+                Location = location,
+                FullName = fullname
             };
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace AppDomainToolkit
 {
-    using System;
+    using System.Collections.Generic;
     using System.Reflection;
 
     /// <summary>
@@ -46,7 +46,15 @@
         /// <returns>
         /// The target assembly.
         /// </returns>
-        Assembly LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+        IEnumerable<Assembly> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+
+        /// <summary>
+        /// Gets an array of all the assemblies currently loaded into the current application domain.
+        /// </summary>
+        /// <returns>
+        /// An array of assemblies.
+        /// </returns>
+        Assembly[] GetAssemblies();
 
         #endregion
     }

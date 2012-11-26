@@ -1,6 +1,7 @@
 ﻿namespace AppDomainToolkit
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
 
@@ -9,13 +10,6 @@
     /// </summary>
     public enum LoadMethod
     {
-        /// <summary>
-        /// The default load context. Use this if your application has it's bits located in the GAC or
-        /// on the main application path of the AppDomain.CurrentDomain. This should be rare unless you
-        /// like putting Assemblies in the GAC.
-        /// </summary>
-        Load,
-
         /// <summary>
         /// Loads the assembly into the LoadFrom context, which enables the assembly and all it's references to be discovered
         /// and loaded into the target application domain. Despite it's penchant for DLL hell, this is probably the way to go by
@@ -65,9 +59,6 @@
             Assembly assembly = null;
             switch (loadMethod)
             {
-                case LoadMethod.Load:
-                    assembly = Assembly.Load(assemblyPath);
-                    break;
                 case LoadMethod.LoadFrom:
                     assembly = Assembly.LoadFrom(assemblyPath);
                     break;
@@ -105,10 +96,19 @@
         /// into the current application domain using the target load method. If LoadBits is the desired load method,
         /// it will attempt to resolve the path to the target PDB files where possible.
         /// </remarks>
-        public Assembly LoadAssemblyWithReferences(LoadMethod method, string assemblyPath)
+        public IEnumerable<Assembly> LoadAssemblyWithReferences(LoadMethod method, string assemblyPath)
         {
             // BMK Implement me.
             throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Just a simple call to AppDomain.CurrentDomain.GetAssemblies(), nothing more.
+        /// </remarks>
+        public Assembly[] GetAssemblies()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies();
         }
 
         #endregion

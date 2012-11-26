@@ -63,6 +63,30 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="test-assembly-files\test-with-external-references\AssemblyA.dll" />
+    <Content Include="test-assembly-files\test-with-external-references\AssemblyA.pdb" />
+    <Content Include="test-assembly-files\test-with-external-references\AssemblyB.dll" />
+    <Content Include="test-assembly-files\test-with-external-references\AssemblyB.pdb" />
+    <Content Include="test-assembly-files\test-with-external-references\TestWithExternalReferences.dll" />
+    <Content Include="test-assembly-files\test-with-external-references\TestWithExternalReferences.pdb" />
+    <Content Include="test-assembly-files\test-with-internal-references\AssemblyA.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test-assembly-files\test-with-internal-references\AssemblyA.pdb" />
+    <Content Include="test-assembly-files\test-with-internal-references\AssemblyB.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test-assembly-files\test-with-internal-references\AssemblyB.pdb" />
+    <Content Include="test-assembly-files\test-with-internal-references\TestWithInternalReferences.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test-assembly-files\test-with-internal-references\TestWithInternalReferences.pdb" />
+    <Content Include="test-assembly-files\TestWithNoReferences.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test-assembly-files\TestWithNoReferences.pdb" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

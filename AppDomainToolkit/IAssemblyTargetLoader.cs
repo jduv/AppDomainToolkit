@@ -1,4 +1,5 @@
-﻿namespace AppDomainToolkit
+﻿using System.Collections.Generic;
+namespace AppDomainToolkit
 {
     /// <summary>
     /// Defines behavior for a class that loads assembly target instances instead of raw assemblies.
@@ -42,9 +43,17 @@
         /// The path to the assembly to load.
         /// </param>
         /// <returns>
-        /// An assembly target pointing to the target assembly.
+        /// A list of loaded assemblies.
         /// </returns>
-        IAssemblyTarget LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+        IEnumerable<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+
+        /// <summary>
+        /// Gets a list of all the assemblies loaded into the current application domain.
+        /// </summary>
+        /// <returns>
+        /// An array of AssemblyTargets.
+        /// </returns>
+        IAssemblyTarget[] GetAssemblies();
 
         #endregion
     }

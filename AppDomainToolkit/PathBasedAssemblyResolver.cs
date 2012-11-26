@@ -26,6 +26,15 @@
         #region Constructors & Destructors
 
         /// <summary>
+        /// Initializes a new instance of the PathBasedAssemblyResolver class. Exists for MarshalByRefObject
+        /// remoting into app domains.
+        /// </summary>
+        public PathBasedAssemblyResolver()
+            : this(null, false, LoadMethod.LoadFrom)
+        {
+        } 
+
+        /// <summary>
         /// Initializes a new instance of the AssemblyResolver class. A default instance of this class will resolve
         /// assemblies into the LoadFrom context.
         /// </summary>
@@ -33,11 +42,15 @@
         /// The loader to use when loading assemblies. Default is null, which will create and use an instance
         /// of the RemotableAssemblyLoader class.
         /// </param>
+        /// <param name="recurse">
+        /// Should the resolver recurse into subdirectories of configured probe paths? Defaults to false.
+        /// </param>
         /// <param name="loadMethod">
         /// The load method to use when loading assemblies. Defaults to LoadMethod.LoadFrom.
         /// </param>
         public PathBasedAssemblyResolver(
             IAssemblyLoader loader = null, 
+            bool recurse = false,
             LoadMethod loadMethod = LoadMethod.LoadFrom)
         {
             this.probePaths = new HashSet<string>();
@@ -55,26 +68,6 @@
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Convenience cast.
-        /// </summary>
-        /// <param name="resolver">
-        /// The resolver to cast.
-        /// </param>
-        /// <returns>
-        /// A ResolveEventHandler.
-        /// </returns>
-        public static implicit operator ResolveEventHandler(PathBasedAssemblyResolver resolver)
-        {
-            ResolveEventHandler handler = null;
-            if (resolver != null)
-            {
-                handler = resolver.Resolve;
-            }
-
-            return handler;
-        }
 
         /// <inheritdoc />
         public void AddProbePath(string path)
