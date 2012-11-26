@@ -46,7 +46,7 @@
         /// <returns>
         /// The target assembly.
         /// </returns>
-        IEnumerable<Assembly> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+        IList<Assembly> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
 
         /// <summary>
         /// Gets an array of all the assemblies currently loaded into the current application domain.

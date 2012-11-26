@@ -34,12 +34,12 @@
         private AppDomainContext(AppDomainSetup setupInfo)
         {
             this.UniqueId = Guid.NewGuid();
-            this.LocalResolver = new PathBasedAssemblyResolver();
+            this.AssemblyImporter = new PathBasedAssemblyResolver();
 
             // Add some root directories to resolve some required assemblies
-            this.LocalResolver.AddProbePath(setupInfo.ApplicationBase);
-            this.LocalResolver.AddProbePath(setupInfo.PrivateBinPath);
-            this.LocalResolver.AddProbePath(setupInfo.PrivateBinPath);
+            this.AssemblyImporter.AddProbePath(setupInfo.ApplicationBase);
+            this.AssemblyImporter.AddProbePath(setupInfo.PrivateBinPath);
+            this.AssemblyImporter.AddProbePath(setupInfo.PrivateBinPath);
 
             // Create the new domain and wrap it for disposal.
             this.wrappedDomain = new DisposableAppDomain(
@@ -48,13 +48,13 @@
                     null,
                     setupInfo));
 
-            AppDomain.CurrentDomain.AssemblyResolve += this.LocalResolver.Resolve;
+            AppDomain.CurrentDomain.AssemblyResolve += this.AssemblyImporter.Resolve;
 
             // Create remotes
             this.loaderProxy = Remote<AssemblyTargetLoader>.CreateProxy(this.wrappedDomain);
             this.resolverProxy = Remote<PathBasedAssemblyResolver>.CreateProxy(this.wrappedDomain);
 
-            // Create a resolver in the other domain.
+            // Assign the resolver in the other domain (just to be safe)
             RemoteAction.Invoke(
                 this.wrappedDomain.Domain,
                 this.resolverProxy.RemoteObject,
@@ -95,7 +95,21 @@
         public Guid UniqueId { get; private set; }
 
         /// <inheritdoc />
-        public IAssemblyResolver LocalResolver { get; private set; }
+        public IAssemblyResolver AssemblyImporter { get; private set; }
+
+        /// <inheritdoc />
+        public IAssemblyResolver RemoteResolver
+        {
+            get
+            {
+                if (this.IsDisposed)
+                {
+                    throw new ObjectDisposedException("The AppDomain has been unloaded or disposed!");
+                }
+
+                return this.resolverProxy.RemoteObject;
+            }
+        }
 
         /// <inheritdoc />
         /// <remarks>
@@ -234,15 +248,33 @@
         }
 
         /// <inheritdoc/>
+        /// <remarks>
+        /// In order to ensure that the assembly is loaded the way the caller expects, the LoadMethod property of
+        /// the remote domain assembly resolver will be temporarily set to the value of <paramref name="loadMethod"/>.
+        /// It will be reset to the original value after the load is complete.
+        /// </remarks>
         public IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string path, string pdbPath = null)
         {
-            return this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, path, pdbPath);
+            var previousLoadMethod = this.resolverProxy.RemoteObject.LoadMethod;
+            this.resolverProxy.RemoteObject.LoadMethod = loadMethod;
+            var target = this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, path, pdbPath);
+            this.resolverProxy.RemoteObject.LoadMethod = previousLoadMethod;
+            return target;
         }
 
         /// <inheritdoc />
+        /// <remarks>
+        /// In order to ensure that the assembly is loaded the way the caller expects, the LoadMethod property of
+        /// the remote domain assembly resolver will be temporarily set to the value of <paramref name="loadMethod"/>.
+        /// It will be reset to the original value after the load is complete.
+        /// </remarks>
         public IEnumerable<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string path)
         {
-            return this.loaderProxy.RemoteObject.LoadAssemblyWithReferences(loadMethod, path);
+            var previousLoadMethod = this.resolverProxy.RemoteObject.LoadMethod;
+            this.resolverProxy.RemoteObject.LoadMethod = loadMethod;
+            var targets = this.loaderProxy.RemoteObject.LoadAssemblyWithReferences(loadMethod, path);
+            this.resolverProxy.RemoteObject.LoadMethod = previousLoadMethod;
+            return targets;
         }
 
         #endregion

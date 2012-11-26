@@ -16,9 +16,15 @@
         AppDomain Domain { get; }
 
         /// <summary>
-        /// Gets the assembly resolver responsible for resolving assemblies in the application domain.
+        /// Gets the assembly resolver responsible for resolving assemblies in the remote application domain.
         /// </summary>
-        IAssemblyResolver LocalResolver { get; }
+        IAssemblyResolver RemoteResolver { get; }
+
+        /// <summary>
+        /// Gets the assembly resolver responsible for resolving assemblies in the current application domain. Use this to import assemblies
+        /// from foreign domains into the current domain by setting it up exactly like the remote one.
+        /// </summary>
+        IAssemblyResolver AssemblyImporter { get; }
 
         /// <summary>
         /// Gets a list of all assemblies loaded into this domain without bleeding them into the current

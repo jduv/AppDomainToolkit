@@ -74,7 +74,7 @@
                     if (File.Exists(pdbPath))
                     {
                         assembly = Assembly.Load(
-                            File.ReadAllBytes(assemblyPath), 
+                            File.ReadAllBytes(assemblyPath),
                             File.ReadAllBytes(pdbPath));
                     }
                     else
@@ -84,6 +84,7 @@
 
                     break;
                 default:
+                    // In case we upadate the enum but forget to update this logic.
                     throw new NotSupportedException("The target load method isn't supported!");
             }
 
@@ -93,13 +94,22 @@
         /// <inheritdoc />
         /// <remarks>
         /// This implementation will perform a best-effort load of the target assembly and it's required references
-        /// into the current application domain using the target load method. If LoadBits is the desired load method,
-        /// it will attempt to resolve the path to the target PDB files where possible.
+        /// into the current application domain. The .NET framework pins us in on which call we're allowed to use
+        /// when loading these assemblies, so we'll need to rely on the AssemblyResolver instance attached to the
+        /// AppDomain in order to load the way we want.
         /// </remarks>
-        public IEnumerable<Assembly> LoadAssemblyWithReferences(LoadMethod method, string assemblyPath)
+        public IList<Assembly> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath)
         {
-            // BMK Implement me.
-            throw new NotImplementedException();
+            var list = new List<Assembly>();
+            var assembly = this.LoadAssembly(loadMethod, assemblyPath);
+            list.Add(assembly);
+
+            foreach (var reference in assembly.GetReferencedAssemblies())
+            {
+                list.Add(Assembly.Load(reference));
+            }
+
+            return list;
         }
 
         /// <inheritdoc />

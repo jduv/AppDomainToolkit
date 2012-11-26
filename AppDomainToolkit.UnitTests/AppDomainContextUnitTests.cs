@@ -16,7 +16,17 @@
 
         private static readonly string NoRefsAssemblyName = @"TestWithNoReferences.dll";
 
-        private static readonly string NoRefsAssemblyPath = TestAssemblyDir + NoRefsAssemblyName;
+        private static readonly string NoRefsAssemblyPath = Path.Combine(TestAssemblyDir, NoRefsAssemblyName);
+
+        private static readonly string InternalRefsAssemblyDir = Path.Combine(TestAssemblyDir, "test-with-internal-references");
+
+        private static readonly string InternalRefsAssemblyName = @"TestWithInternalReferences.dll";
+
+        private static readonly string InternalRefsAssemblyPath = Path.Combine(InternalRefsAssemblyDir, InternalRefsAssemblyName);
+
+        private static readonly string AssemblyAName = "AssemblyA.dll";
+
+        private static readonly string AssemblyBName = "AssemblyB.dll";
 
         #endregion
 
@@ -32,7 +42,7 @@
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
             Assert.IsNotNull(target.UniqueId);
-            Assert.IsNotNull(target.LocalResolver);
+            Assert.IsNotNull(target.RemoteResolver);
             Assert.AreNotEqual(AppDomain.CurrentDomain, target.Domain);
         }
 
@@ -59,7 +69,7 @@
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
             Assert.IsNotNull(target.UniqueId);
-            Assert.IsNotNull(target.LocalResolver);
+            Assert.IsNotNull(target.RemoteResolver);
             Assert.AreNotEqual(AppDomain.CurrentDomain, target.Domain);
 
             // Verify the app domain's setup info
@@ -83,7 +93,7 @@
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
             Assert.IsNotNull(target.UniqueId);
-            Assert.IsNotNull(target.LocalResolver);
+            Assert.IsNotNull(target.RemoteResolver);
             Assert.AreNotEqual(AppDomain.CurrentDomain, target.Domain);
 
             // Verify the app domain's setup info
@@ -105,7 +115,7 @@
                 Assert.IsNotNull(target);
                 Assert.IsNotNull(target.Domain);
                 Assert.IsNotNull(target.UniqueId);
-                Assert.IsNotNull(target.LocalResolver);
+                Assert.IsNotNull(target.RemoteResolver);
                 Assert.AreNotEqual(AppDomain.CurrentDomain, target.Domain);
                 Assert.IsFalse(target.IsDisposed);
             }
@@ -133,6 +143,17 @@
 
             Assert.IsTrue(target.IsDisposed);
             var assemblies = target.LoadedAssemblies;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void Dispose_RemoteResolverPropery()
+        {
+            var target = AppDomainContext.Create();
+            target.Dispose();
+
+            Assert.IsTrue(target.IsDisposed);
+            var resolver = target.RemoteResolver;
         }
 
         #endregion
@@ -216,39 +237,130 @@
 
         #region LoadTarget
 
+        [TestMethod]
+        public void LoadTarget_NoRefAssembly_LoadFile()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                context.LoadTarget(LoadMethod.LoadFile, target);
+                var actual = context.LoadedAssemblies.FirstOrDefault(x => x.FullName.Equals(target.FullName));
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(target.FullName, actual.FullName);
+                Assert.AreEqual(target.Location, actual.Location);
+                Assert.AreEqual(target.CodeBase, target.CodeBase);
+            }
+        }
+
+        [TestMethod]
+        public void LoadTarget_NoRefAssembly_LoadFrom()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                context.LoadTarget(LoadMethod.LoadFrom, target);
+                var actual = context.LoadedAssemblies.FirstOrDefault(x => x.FullName.Equals(target.FullName));
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(target.FullName, actual.FullName);
+                Assert.AreEqual(target.Location, actual.Location);
+                Assert.AreEqual(target.CodeBase, target.CodeBase);
+            }
+        }
+
+        [TestMethod]
+        public void LoadTarget_NoRefAssembly_LoadBits()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                context.LoadTarget(LoadMethod.LoadBits, target);
+                var actual = context.LoadedAssemblies.FirstOrDefault(x => x.FullName.Equals(target.FullName));
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(target.FullName, actual.FullName);
+                Assert.AreEqual(string.Empty, actual.Location);
+                Assert.AreEqual(target.CodeBase, target.CodeBase);
+            }
+        }
 
 
         #endregion
 
         #region LoadTargetWithReferences
 
+        [TestMethod]
+        public void LoadTargetWithReferences_InternalReferences_LoadFile()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
 
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                var targets = context.LoadTargetWithReferences(LoadMethod.LoadFile, target);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+            }
+        }
+
+        [TestMethod]
+        public void LoadTargetWithReferences_InternalReferences_LoadFrom()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
+
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                var targets = context.LoadTargetWithReferences(LoadMethod.LoadFrom, target);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+            }
+        }
+
+        [TestMethod]
+        public void LoadTargetWithReferences_InternalReferences_LoadBitsNoPdbSpecified()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
+
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var assembly = Assembly.LoadFile(targetPath);
+                var target = AssemblyTarget.FromAssembly(assembly);
+
+                var targets = context.LoadTargetWithReferences(LoadMethod.LoadBits, target);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+            }
+        }
 
         #endregion
 
         #region LoadAssembly
-
-        [TestMethod]
-        public void LoadAssembly_CurrentlyExecutingAssembly_LoadFile()
-        {
-            using (var context = AppDomainContext.Create())
-            {
-                var toLoad = Assembly.GetExecutingAssembly().Location;
-                context.LoadAssembly(LoadMethod.LoadFile, toLoad);
-                Assert.IsTrue(context.LoadedAssemblies.Any(x => x.Location.Equals(toLoad)));
-            }
-        }
-
-        [TestMethod]
-        public void LoadAssembly_CurrentlyExecutingAssembly_LoadFrom()
-        {
-            using (var context = AppDomainContext.Create())
-            {
-                var toLoad = Assembly.GetExecutingAssembly().Location;
-                context.LoadAssembly(LoadMethod.LoadFrom, toLoad);
-                Assert.IsTrue(context.LoadedAssemblies.Any(x => x.Location.Equals(toLoad)));
-            }
-        }
 
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadFile()
@@ -298,11 +410,72 @@
             }
         }
 
+        [TestMethod]
+        public void LoadAssembly_NoRefAssembly_LoadBitsWrongPdbPathSpecified()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var pdbPath = Path.ChangeExtension(Path.Combine(TestAssemblyDir, Guid.NewGuid().ToString(), NoRefsAssemblyName), "pdb");
+                var codebaseUri = new Uri(targetPath);
+                var target = context.LoadAssembly(LoadMethod.LoadBits, targetPath, Path.GetFullPath(pdbPath));
+                Assert.IsTrue(context.LoadedAssemblies.Any(x => x.FullName.Equals(target.FullName)));
+            }
+        }
+
         #endregion
 
         #region LoadAssemblyWithReferences
 
+        [TestMethod]
+        public void LoadAssemblyWithReferences_InternalReferences_LoadFile()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
 
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var targets = context.LoadAssemblyWithReferences(LoadMethod.LoadFile, targetPath);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+            }
+        }
+
+        [TestMethod]
+        public void LoadAssemblyWithReferences_InternalReferences_LoadFrom()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
+
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var targets = context.LoadAssemblyWithReferences(LoadMethod.LoadFrom, targetPath);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+            }
+        }
+
+        [TestMethod]
+        public void LoadAssemblyWithReferences_InternalReferences_LoadBitsNoPdbSpecified()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var prevNumAssemblies = context.LoadedAssemblies.Count();
+
+                // Add the correct resolver path for the test dir.
+                context.RemoteResolver.AddProbePath(Path.GetFullPath(InternalRefsAssemblyDir));
+                var targetPath = Path.GetFullPath(InternalRefsAssemblyPath);
+                var targets = context.LoadAssemblyWithReferences(LoadMethod.LoadBits, targetPath);
+
+                Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+            }
+        }
 
         #endregion
 

@@ -45,7 +45,7 @@ namespace AppDomainToolkit
         /// <returns>
         /// A list of loaded assemblies.
         /// </returns>
-        IEnumerable<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
+        IList<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath);
 
         /// <summary>
         /// Gets a list of all the assemblies loaded into the current application domain.
