@@ -158,10 +158,23 @@
             return this.LoadAssembly(loadMethod, target.Location);
         }
 
+        /// <inheritdoc />
+        public IAssemblyTarget LoadTargetWithReferences(LoadMethod loadMethod, IAssemblyTarget target)
+        {
+            return this.LoadAssemblyWithReferences(loadMethod, target.Location);
+        }
+
         /// <inheritdoc/>
         public IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null)
         {
             return this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, assemblyPath, pdbPath);
+        }
+
+        /// <inheritdoc />
+        public IAssemblyTarget LoadAssemblyWithReferences(LoadMethod loadMethod, string path)
+        {
+            // BMK Implement me.
+            throw new NotImplementedException();
         }
 
         #endregion
