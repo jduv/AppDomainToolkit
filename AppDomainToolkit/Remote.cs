@@ -37,6 +37,15 @@
             this.IsDisposed = false;
         }
 
+        /// <summary>
+        /// Finalizes an instance of the Remote class.
+        /// </summary>
+        ~Remote()
+        {
+            this.OnDispose(false);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         #region Properties
@@ -140,19 +149,34 @@
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (!this.IsDisposed)
+            this.OnDispose(true);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Should be called when the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">
+        /// Was Dispose() called or did we get here from the finalizer?
+        /// </param>
+        private void OnDispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (!this.wrappedDomain.IsDisposed)
+                if (!this.IsDisposed)
                 {
-                    this.wrappedDomain.Dispose();
+                    if (!this.wrappedDomain.IsDisposed)
+                    {
+                        this.wrappedDomain.Dispose();
+                    }
+
+                    this.remoteObject = null;
+                    this.IsDisposed = true;
                 }
-
-                this.remoteObject = null;
-                this.IsDisposed = true;
             }
-
-            // No subclasses exist, no need to suppress finalizers.
-            //GC.SuppressFinalize(this);
         }
 
         #endregion

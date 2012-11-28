@@ -69,25 +69,13 @@
     <Content Include="test-assembly-files\test-with-internal-references\AssemblyA.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="test-assembly-files\test-with-internal-references\AssemblyA.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="test-assembly-files\test-with-internal-references\AssemblyB.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test-assembly-files\test-with-internal-references\AssemblyB.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="test-assembly-files\test-with-internal-references\TestWithInternalReferences.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="test-assembly-files\test-with-internal-references\TestWithInternalReferences.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="test-assembly-files\TestWithNoReferences.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="test-assembly-files\TestWithNoReferences.pdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

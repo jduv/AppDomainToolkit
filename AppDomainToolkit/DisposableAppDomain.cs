@@ -35,6 +35,15 @@
             this.IsDisposed = false;
         }
 
+        /// <summary>
+        /// Finalizes an instance of the DisposableAppDomain class.
+        /// </summary>
+        ~DisposableAppDomain()
+        {
+            this.OnDispose(false);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         #region Properties
@@ -65,20 +74,36 @@
         /// <inheritdoc />
         public void Dispose()
         {
-            if (!this.IsDisposed)
-            {
-                // Do *not* unload the current app domain.
-                if (!(this.Domain == null || this.Domain.Equals(AppDomain.CurrentDomain)))
-                {
-                    AppDomain.Unload(this.Domain);
-                }
+            this.OnDispose(true);
+        }
 
-                this.domain = null;
-                this.IsDisposed = true;
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Should be called when the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">
+        /// Was Dispose() called or did we get here from the finalizer?
+        /// </param>
+        private void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!this.IsDisposed)
+                {
+                    // Do *not* unload the current app domain.
+                    if (!(this.Domain == null || this.Domain.Equals(AppDomain.CurrentDomain)))
+                    {
+                        AppDomain.Unload(this.Domain);
+                    }
+
+                    this.domain = null;
+                }
             }
 
-            // No subclasses exist, no need to suppress finalizers.
-            //GC.SuppressFinalize(this);
+            this.IsDisposed = true;
         }
 
         #endregion

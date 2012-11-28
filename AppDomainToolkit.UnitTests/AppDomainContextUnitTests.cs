@@ -316,6 +316,9 @@
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
                 Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 
@@ -336,6 +339,9 @@
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
                 Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 
@@ -355,6 +361,9 @@
                 var targets = context.LoadTargetWithReferences(LoadMethod.LoadBits, target);
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 
@@ -441,6 +450,9 @@
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
                 Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 
@@ -458,6 +470,9 @@
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
                 Assert.IsTrue(targets.Any(x => x.Location.Equals(targetPath)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 
@@ -474,6 +489,9 @@
                 var targets = context.LoadAssemblyWithReferences(LoadMethod.LoadBits, targetPath);
 
                 Assert.IsTrue(context.LoadedAssemblies.Count() > prevNumAssemblies);
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(InternalRefsAssemblyName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyAName)));
+                Assert.IsTrue(targets.Any(x => x.FullName.Contains(AssemblyBName)));
             }
         }
 

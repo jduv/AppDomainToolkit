@@ -71,6 +71,15 @@
             this.IsDisposed = false;
         }
 
+        /// <summary>
+        /// Finalizes an instance of the AppDomainContext class.
+        /// </summary>
+        ~AppDomainContext()
+        {
+            this.OnDispose(false);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         #region Properties
@@ -183,23 +192,7 @@
         /// <inheritdoc />
         public void Dispose()
         {
-            if (!this.IsDisposed)
-            {
-                if (!this.wrappedDomain.IsDisposed)
-                {
-                    this.wrappedDomain.Dispose();
-                }
-
-                if (!this.loaderProxy.IsDisposed)
-                {
-                    this.loaderProxy.Dispose();
-                }
-
-                this.IsDisposed = true;
-            }
-
-            // No subclasses exist, no need to suppress finalizers.
-            //GC.SuppressFinalize(this);
+            this.OnDispose(true);
         }
 
         /// <inheritdoc />
@@ -275,6 +268,31 @@
             var targets = this.loaderProxy.RemoteObject.LoadAssemblyWithReferences(loadMethod, path);
             this.resolverProxy.RemoteObject.LoadMethod = previousLoadMethod;
             return targets;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!this.IsDisposed)
+                {
+                    if (!this.wrappedDomain.IsDisposed)
+                    {
+                        this.wrappedDomain.Dispose();
+                    }
+
+                    if (!this.loaderProxy.IsDisposed)
+                    {
+                        this.loaderProxy.Dispose();
+                    }
+
+                    this.IsDisposed = true;
+                }
+            }
         }
 
         #endregion
