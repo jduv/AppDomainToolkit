@@ -53,13 +53,9 @@
             Assert.IsTrue(target.IsDisposed);
         }
 
-        #endregion
-
-        #region Properties
-
         [TestMethod]
         [ExpectedException(typeof(ObjectDisposedException))]
-        public void DomainProp_DisposedObject()
+        public void Dispose_DomainProp()
         {
             // The current app domain should NOT be unloaded, but the object should be disposed.
             var target = new DisposableAppDomain(AppDomain.CreateDomain("My domain"));

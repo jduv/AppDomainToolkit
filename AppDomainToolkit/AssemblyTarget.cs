@@ -59,21 +59,21 @@
         }
 
         /// <summary>
-        /// Creates a new assembly target for the given location.
+        /// Creates a new assembly target for the given location. The only required parameter here is the codebase.
         /// </summary>
         /// <param name="codebase">
         /// The URI to the code base.
         /// </param>
         /// <param name="location">
-        /// The location. Must be a valid path and an existing file.
+        /// The location. Must be a valid path and an existing file if supplied--defaults to null.
         /// </param>
         /// <param name="fullname">
-        /// The full name of the assembly.
+        /// The full name of the assembly. Defaults to null.
         /// </param>
         /// <returns>
         /// An AssemblyTarget.
         /// </returns>
-        public static IAssemblyTarget FromPath(Uri codebase, string location, string fullname)
+        public static IAssemblyTarget FromPath(Uri codebase, string location = null, string fullname = null)
         {
             if (codebase == null)
             {

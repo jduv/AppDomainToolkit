@@ -52,6 +52,8 @@
     <Compile Include="DisposableAppDomainUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDomainContextUnitTests.cs" />
+    <Compile Include="RemoteActionUnitTests.cs" />
+    <Compile Include="RemoteFuncUnitTests.cs" />
     <Compile Include="RemoteUnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
