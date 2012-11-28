@@ -290,9 +290,11 @@
                         this.loaderProxy.Dispose();
                     }
 
-                    this.IsDisposed = true;
+                    this.AssemblyImporter = null;
                 }
             }
+
+            this.IsDisposed = true;
         }
 
         #endregion

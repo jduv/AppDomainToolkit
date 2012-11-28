@@ -174,9 +174,10 @@
                     }
 
                     this.remoteObject = null;
-                    this.IsDisposed = true;
                 }
             }
+
+            this.IsDisposed = true;
         }
 
         #endregion

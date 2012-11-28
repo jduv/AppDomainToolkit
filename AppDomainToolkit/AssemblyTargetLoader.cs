@@ -27,19 +27,8 @@
         /// required for remoting.
         /// </summary>
         public AssemblyTargetLoader()
-            : this(null)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the RemotableAssemblyLoader class.
-        /// </summary>
-        /// <param name="loader">
-        /// The AssemblyLoader to use when importing assemblies.
-        /// </param>
-        public AssemblyTargetLoader(IAssemblyLoader loader)
-        {
-            this.loader = loader == null ? new AssemblyLoader() : loader;
+            this.loader = new AssemblyLoader();
         }
 
         #endregion

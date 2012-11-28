@@ -30,7 +30,7 @@
         /// remoting into app domains.
         /// </summary>
         public PathBasedAssemblyResolver()
-            : this(null, false, LoadMethod.LoadFrom)
+            : this(null, LoadMethod.LoadFrom)
         {
         } 
 
@@ -42,15 +42,11 @@
         /// The loader to use when loading assemblies. Default is null, which will create and use an instance
         /// of the RemotableAssemblyLoader class.
         /// </param>
-        /// <param name="recurse">
-        /// Should the resolver recurse into subdirectories of configured probe paths? Defaults to false.
-        /// </param>
         /// <param name="loadMethod">
         /// The load method to use when loading assemblies. Defaults to LoadMethod.LoadFrom.
         /// </param>
         public PathBasedAssemblyResolver(
             IAssemblyLoader loader = null, 
-            bool recurse = false,
             LoadMethod loadMethod = LoadMethod.LoadFrom)
         {
             this.probePaths = new HashSet<string>();

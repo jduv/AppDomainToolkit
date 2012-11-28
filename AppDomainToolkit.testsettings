@@ -25,7 +25,7 @@
           <Configuration>
             <CodeCoverage xmlns="">
               <Regular>
-                <CodeCoverageItem binaryFile="AppDomainToolkit\bin\Release\AppDomainToolkit.dll" pdbFile="AppDomainToolkit\bin\Release\AppDomainToolkit.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="AppDomainToolkit\bin\Debug\AppDomainToolkit.dll" pdbFile="AppDomainToolkit\bin\Debug\AppDomainToolkit.pdb" instrumentInPlace="true" />
               </Regular>
             </CodeCoverage>
           </Configuration>

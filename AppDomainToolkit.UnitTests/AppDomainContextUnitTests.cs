@@ -14,19 +14,27 @@
 
         private static readonly string TestAssemblyDir = @"test-assembly-files\";
 
-        private static readonly string NoRefsAssemblyName = @"TestWithNoReferences.dll";
+        private static readonly string NoRefsAssemblyName = @"TestWithNoReferences";
 
-        private static readonly string NoRefsAssemblyPath = Path.Combine(TestAssemblyDir, NoRefsAssemblyName);
+        private static readonly string NoRefsAssemblyFileName = NoRefsAssemblyName + @".dll";
+
+        private static readonly string NoRefsAssemblyPath = Path.Combine(TestAssemblyDir, NoRefsAssemblyFileName);
 
         private static readonly string InternalRefsAssemblyDir = Path.Combine(TestAssemblyDir, "test-with-internal-references");
 
-        private static readonly string InternalRefsAssemblyName = @"TestWithInternalReferences.dll";
+        private static readonly string InternalRefsAssemblyName = @"TestWithInternalReferences";
 
-        private static readonly string InternalRefsAssemblyPath = Path.Combine(InternalRefsAssemblyDir, InternalRefsAssemblyName);
+        private static readonly string InternalRefsAssemblyFileName = InternalRefsAssemblyName + @".dll";
 
-        private static readonly string AssemblyAName = "AssemblyA.dll";
+        private static readonly string InternalRefsAssemblyPath = Path.Combine(InternalRefsAssemblyDir, InternalRefsAssemblyFileName);
 
-        private static readonly string AssemblyBName = "AssemblyB.dll";
+        private static readonly string AssemblyAName = "AssemblyA";
+
+        private static readonly string AssemblyAFileName = AssemblyAName + ".dll";
+
+        private static readonly string AssemblyBName = "AssemblyB";
+
+        private static readonly string AssemblyBFileName = AssemblyBName + ".dll";
 
         #endregion
 
@@ -425,7 +433,7 @@
             using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
-                var pdbPath = Path.ChangeExtension(Path.Combine(TestAssemblyDir, Guid.NewGuid().ToString(), NoRefsAssemblyName), "pdb");
+                var pdbPath = Path.ChangeExtension(Path.Combine(TestAssemblyDir, Guid.NewGuid().ToString(), NoRefsAssemblyFileName), "pdb");
                 var codebaseUri = new Uri(targetPath);
                 var target = context.LoadAssembly(LoadMethod.LoadBits, targetPath, Path.GetFullPath(pdbPath));
                 Assert.IsTrue(context.LoadedAssemblies.Any(x => x.FullName.Equals(target.FullName)));
