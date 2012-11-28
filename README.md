@@ -43,8 +43,9 @@ the static Assembly methods, along with pretty much anything that reflects acros
 [```IAssemblyResolver```][2] instance, but an overload of ```AppDomainContext.Create()``` allows you to pass your own
 ```AppDomainSetupInfo``` instance. When doing this, make sure that you set the ```ApplicationBase``` property to be
 the base directory where your application, and ideally the AppDomainToolkit assembly lives. Usually this can easily
-be done with a simple ```Assembly.GetExecutingAssembly.Location()``` call. Also note that you can access the
-[```IAssemblyResolver```][2] instance on an [```AppDomainContext```][3] through the ```context.Resolver``` property.
+be done with a simple ```Assembly.GetExecutingAssembly.Location()``` call. Also note that you can access the remote and
+local [```IAssemblyResolver```][2] instances on an [```AppDomainContext```][3] through the ```context.AssemblyImporter```
+and ```context.RemoteResolver``` properties.
 
 ### Executing arbitrary code
 The typical remoting scenario requires you to create an instance of a remote class using the ```CreateInstanceAndUnwrap```
