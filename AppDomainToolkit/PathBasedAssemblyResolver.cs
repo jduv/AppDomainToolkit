@@ -68,8 +68,33 @@
         /// <inheritdoc />
         public void AddProbePath(string path)
         {
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
             {
+                return;
+            }
+
+            if (path.Contains(";"))
+            {
+                var paths = path.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+                this.AddProbePaths(paths);
+            }
+            else
+            {
+                this.AddProbePaths(path);
+            }
+        }
+
+        /// <inheritdoc />
+        public void AddProbePaths(params string[] paths)
+        {
+            foreach (var path in paths)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    continue;
+                }
+
                 var dir = new DirectoryInfo(path);
                 if (!this.probePaths.Contains(dir.FullName))
                 {
