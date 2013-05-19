@@ -39,7 +39,6 @@
             // Add some root directories to resolve some required assemblies
             this.AssemblyImporter.AddProbePath(setupInfo.ApplicationBase);
             this.AssemblyImporter.AddProbePath(setupInfo.PrivateBinPath);
-            this.AssemblyImporter.AddProbePath(setupInfo.PrivateBinPath);
 
             // Create the new domain and wrap it for disposal.
             this.wrappedDomain = new DisposableAppDomain(
@@ -66,7 +65,6 @@
             // Assign proper paths to the remote resolver
             this.resolverProxy.RemoteObject.AddProbePath(setupInfo.ApplicationBase);
             this.resolverProxy.RemoteObject.AddProbePath(setupInfo.PrivateBinPath);
-            this.resolverProxy.RemoteObject.AddProbePath(setupInfo.PrivateBinPathProbe);
 
             this.IsDisposed = false;
         }

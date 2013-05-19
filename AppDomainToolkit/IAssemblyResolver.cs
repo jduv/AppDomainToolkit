@@ -29,6 +29,15 @@
         void AddProbePath(string path);
 
         /// <summary>
+        /// Adds a probe path to the assembly loader. These are directories that will be searched while assembly
+        /// resolver events are being processed.
+        /// </summary>
+        /// <param name="paths">
+        /// The paths to probe.
+        /// </param>
+        void AddProbePaths(params string[] paths);
+
+        /// <summary>
         /// Resolves assemblies. This enables all assembly loaders to be able to handle the resolve event in their specified
         /// application domain.
         /// </summary>
