@@ -15,6 +15,26 @@
         /// </summary>
         LoadMethod LoadMethod { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ApplicationBase (path) property.
+        /// Default PathBasedAssemblyResolver supports semicolon delimited paths.
+        /// </summary>
+        /// <remarks>
+        /// In order to provide proper extensibility, allow the IAssemblyResolver 
+        /// implementation to choose how and when to use these paths when resolving. 
+        /// </remarks>
+        string ApplicationBase { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the PrivateBinPath property. 
+        /// Default PathBasedAssemblyResolver supports semicolon delimited paths.
+        /// </summary>
+        /// <remarks>
+        /// In order to provide proper extensibility, allow the IAssemblyResolver 
+        /// implementation to choose how and when to use these paths when resolving. 
+        /// </remarks>
+        string PrivateBinPath { get; set; }
+
         #endregion
 
         #region Methods

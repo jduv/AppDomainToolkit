@@ -19,7 +19,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_NullFunction()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 RemoteAction.Invoke(context.Domain, null);
             }
@@ -68,7 +68,7 @@
         [TestMethod]
         public void Invoke_MarshalObjectByRef_NoArguments()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 RemoteAction.Invoke(context.Domain, () => {});
             }
@@ -77,7 +77,7 @@
         [TestMethod]
         public void Invoke_MarshalObjectByRef_OneArg()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 var actual = new Test();
                 RemoteAction.Invoke(
@@ -96,7 +96,7 @@
         [TestMethod]
         public void Invoke_MarshalObjectByRef_TwoArg()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 var actual = new Test();
                 RemoteAction.Invoke(
@@ -118,7 +118,7 @@
         [TestMethod]
         public void Invoke_MarshalObjectByRef_ThreeArg()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 var actual = new Test();
                 RemoteAction.Invoke(
@@ -143,7 +143,7 @@
         [TestMethod]
         public void Invoke_MarshalObjectByRef_FourArg()
         {
-            using (var context = AppDomainContext.Create())
+            using (var context = AppDomainContext<AssemblyLoader, PathBasedAssemblyResolver>.Create())
             {
                 var actual = new Test();
                 RemoteAction.Invoke(
