@@ -32,7 +32,7 @@
         public PathBasedAssemblyResolver()
             : this(null, LoadMethod.LoadFrom)
         {
-        } 
+        }
 
         /// <summary>
         /// Initializes a new instance of the AssemblyResolver class. A default instance of this class will resolve
@@ -46,7 +46,7 @@
         /// The load method to use when loading assemblies. Defaults to LoadMethod.LoadFrom.
         /// </param>
         public PathBasedAssemblyResolver(
-            IAssemblyLoader loader = null, 
+            IAssemblyLoader loader = null,
             LoadMethod loadMethod = LoadMethod.LoadFrom)
         {
             this.probePaths = new HashSet<string>();
@@ -60,6 +60,32 @@
 
         /// <inheritdoc />
         public LoadMethod LoadMethod { get; set; }
+
+        /// <inheritdoc />
+        private string _applicationBase;
+
+        public string ApplicationBase
+        {
+            get { return _applicationBase; }
+            set
+            {
+                _applicationBase = value;
+                this.AddProbePath(value);
+            }
+        }
+
+        /// <inheritdoc />
+        private string _privateBinPath;
+
+        public string PrivateBinPath
+        {
+            get { return _privateBinPath; }
+            set
+            {
+                _privateBinPath = value;
+                AddProbePath(value);
+            }
+        }
 
         #endregion
 
@@ -127,5 +153,7 @@
         }
 
         #endregion
+
+
     }
 }
