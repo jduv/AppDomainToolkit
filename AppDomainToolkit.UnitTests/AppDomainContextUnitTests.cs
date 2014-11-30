@@ -45,7 +45,7 @@
         [TestMethod]
         public void Create_NoArgs_ValidContext()
         {
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create();
+            var target = AppDomainContext.Create();
 
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
@@ -58,7 +58,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Create_NullAppDomainSetupInfo()
         {
-            var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create(null);
+            var context = AppDomainContext.Create(null);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@
                 PrivateBinPath = workingDir
             };
 
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create(setupInfo);
+            var target = AppDomainContext.Create(setupInfo);
 
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
@@ -96,7 +96,7 @@
                 PrivateBinPath = workingDir
             };
 
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create(setupInfo);
+            var target = AppDomainContext.Create(setupInfo);
 
             Assert.IsNotNull(target);
             Assert.IsNotNull(target.Domain);
@@ -117,8 +117,8 @@
         [TestMethod]
         public void Dispose_WithUsingClause()
         {
-            AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> target;
-            using (target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            AppDomainContext<AssemblyTargetLoader,PathBasedAssemblyResolver> target;
+            using (target = AppDomainContext.Create())
             {
                 Assert.IsNotNull(target);
                 Assert.IsNotNull(target.Domain);
@@ -135,7 +135,7 @@
         [ExpectedException(typeof(ObjectDisposedException))]
         public void Dispose_DomainProperty()
         {
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create();
+            var target = AppDomainContext.Create();
             target.Dispose();
 
             Assert.IsTrue(target.IsDisposed);
@@ -146,7 +146,7 @@
         [ExpectedException(typeof(ObjectDisposedException))]
         public void Dispose_LoadedAssembliesProperty()
         {
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create();
+            var target = AppDomainContext.Create();
             target.Dispose();
 
             Assert.IsTrue(target.IsDisposed);
@@ -157,7 +157,7 @@
         [ExpectedException(typeof(ObjectDisposedException))]
         public void Dispose_RemoteResolverPropery()
         {
-            var target = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create();
+            var target = AppDomainContext.Create();
             target.Dispose();
 
             Assert.IsTrue(target.IsDisposed);
@@ -172,7 +172,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void FindByCodeBase_NullArgument()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 context.FindByCodeBase(null);
             }
@@ -181,7 +181,7 @@
         [TestMethod]
         public void FindByCodeBase_NoRefAssembly_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var codebaseUri = new Uri(targetPath);
@@ -198,7 +198,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void FindByFullName_NullArgument()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 context.FindByFullName(null);
             }
@@ -207,7 +207,7 @@
         [TestMethod]
         public void FindByFullName_NoRefAssembly_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var target = context.LoadAssembly(LoadMethod.LoadFrom, targetPath);
@@ -223,7 +223,7 @@
         [ExpectedException(typeof(ArgumentException))]
         public void FindByLocation_NullArgument()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 context.FindByLocation(null);
             }
@@ -232,7 +232,7 @@
         [TestMethod]
         public void FindByLocation_NoRefAssembly_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var target = context.LoadAssembly(LoadMethod.LoadFrom, targetPath);
@@ -248,7 +248,7 @@
         [TestMethod]
         public void LoadTarget_NoRefAssembly_LoadFile()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var assembly = Assembly.LoadFile(targetPath);
@@ -267,7 +267,7 @@
         [TestMethod]
         public void LoadTarget_NoRefAssembly_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var assembly = Assembly.LoadFile(targetPath);
@@ -286,7 +286,7 @@
         [TestMethod]
         public void LoadTarget_NoRefAssembly_LoadBits()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var assembly = Assembly.LoadFile(targetPath);
@@ -310,7 +310,7 @@
         [TestMethod]
         public void LoadTargetWithReferences_InternalReferences_LoadFile()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 
@@ -333,7 +333,7 @@
         [TestMethod]
         public void LoadTargetWithReferences_InternalReferences_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 
@@ -356,7 +356,7 @@
         [TestMethod]
         public void LoadTargetWithReferences_InternalReferences_LoadBitsNoPdbSpecified()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 
@@ -382,7 +382,7 @@
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadFile()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var codebaseUri = new Uri(targetPath);
@@ -394,7 +394,7 @@
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var codebaseUri = new Uri(targetPath);
@@ -406,7 +406,7 @@
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadBitsNoPdbSpecified()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var codebaseUri = new Uri(targetPath);
@@ -418,7 +418,7 @@
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadBitsPdbSpecified()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var codebaseUri = new Uri(targetPath);
@@ -430,7 +430,7 @@
         [TestMethod]
         public void LoadAssembly_NoRefAssembly_LoadBitsWrongPdbPathSpecified()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
                 var pdbPath = Path.ChangeExtension(Path.Combine(TestAssemblyDir, Guid.NewGuid().ToString(), NoRefsAssemblyFileName), "pdb");
@@ -447,7 +447,7 @@
         [TestMethod]
         public void LoadAssemblyWithReferences_InternalReferences_LoadFile()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 
@@ -467,7 +467,7 @@
         [TestMethod]
         public void LoadAssemblyWithReferences_InternalReferences_LoadFrom()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 
@@ -487,7 +487,7 @@
         [TestMethod]
         public void LoadAssemblyWithReferences_InternalReferences_LoadBitsNoPdbSpecified()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var prevNumAssemblies = context.LoadedAssemblies.Count();
 

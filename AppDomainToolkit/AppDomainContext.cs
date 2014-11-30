@@ -6,6 +6,12 @@
     using System.Reflection;
     using System.Collections.Generic;
 
+    public static class AppDomainContext
+    {
+        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create() { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(); }
+        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create(AppDomainSetup setupInfo) { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(setupInfo); }
+    }
+
     /// <summary>
     /// Loads assemblies into the contained application domain.
     /// </summary>
@@ -167,7 +173,6 @@
 
             return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(setupInfo) { UniqueId = guid };
         }
-        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create() { return Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(); }
 
         /// <summary>
         /// Creates a new instance of the AppDomainContext class.
@@ -194,7 +199,6 @@
 
             return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(setupInfo) { UniqueId = guid };
         }
-        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create(AppDomainSetup setupInfo) { return Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(setupInfo); }
 
         /// <inheritdoc />
         public void Dispose()

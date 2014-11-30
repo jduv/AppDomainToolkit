@@ -19,7 +19,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_NullFunction()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke<int>(context.Domain, null);
             }
@@ -28,7 +28,7 @@
         [TestMethod]
         public void Invoke_EmptyFunction()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(context.Domain, () => { return 1; });
                 Assert.AreEqual(1, actual);
@@ -78,7 +78,7 @@
         [TestMethod]
         public void Invoke_Serializable_NoArguments()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(
                     context.Domain,
@@ -95,7 +95,7 @@
         [TestMethod]
         public void Invoke_Serializable_OneArg()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(
                     context.Domain,
@@ -113,7 +113,7 @@
         [TestMethod]
         public void Invoke_Serializable_TwoArg()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(
                     context.Domain,
@@ -133,7 +133,7 @@
         [TestMethod]
         public void Invoke_Serializable_ThreeArg()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(
                     context.Domain,
@@ -155,7 +155,7 @@
         [TestMethod]
         public void Invoke_Serializable_FourArg()
         {
-            using (var context = AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create())
+            using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(
                     context.Domain,
