@@ -6,9 +6,28 @@
     using System.Reflection;
     using System.Collections.Generic;
 
-    public static class AppDomainContext
+    /// <summary>
+    /// Loads assemblies into the contained application domain.<br/>
+    /// No-hassle wrapper for creating default instances of <see cref="AppDomainToolkit.AppDomainContext&lt;TAssemblyTargetLoader, TAssemblyResolver&gt;" />
+    /// </summary>
+    public sealed class AppDomainContext 
     {
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
         public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create() { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(); }
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="setupInfo">
+        /// The setup info.
+        /// </param>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
         public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create(AppDomainSetup setupInfo) { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(setupInfo); }
     }
 
@@ -158,9 +177,9 @@
         /// <returns>
         /// A new AppDomainContext.
         /// </returns>
-        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TAssemblyTargetLoader, TAssemblyResolver>()
-            where TAssemblyTargetLoader : MarshalByRefObject, IAssemblyTargetLoader, new()
-            where TAssemblyResolver : MarshalByRefObject, IAssemblyResolver, new()
+        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TNewAssemblyTargetLoader, TNewAssemblyResolver>()
+            where TNewAssemblyTargetLoader : MarshalByRefObject, TAssemblyTargetLoader, IAssemblyTargetLoader, new()
+            where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             var guid = Guid.NewGuid();
             var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -183,9 +202,9 @@
         /// <returns>
         /// A new AppDomainContext.
         /// </returns>
-        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TAssemblyTargetLoader, TAssemblyResolver>(AppDomainSetup setupInfo)
-            where TAssemblyTargetLoader : MarshalByRefObject, IAssemblyTargetLoader, new()
-            where TAssemblyResolver : MarshalByRefObject, IAssemblyResolver, new()
+        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TNewAssemblyTargetLoader, TNewAssemblyResolver>(AppDomainSetup setupInfo)
+            where TNewAssemblyTargetLoader : MarshalByRefObject, TAssemblyTargetLoader, IAssemblyTargetLoader, new()
+            where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             if (setupInfo == null)
             {
