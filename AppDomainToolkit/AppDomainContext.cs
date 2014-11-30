@@ -7,15 +7,42 @@
     using System.Collections.Generic;
 
     /// <summary>
+    /// Loads assemblies into the contained application domain.<br/>
+    /// No-hassle wrapper for creating default instances of <see cref="AppDomainToolkit.AppDomainContext&lt;TAssemblyTargetLoader, TAssemblyResolver&gt;" />
+    /// </summary>
+    public sealed class AppDomainContext 
+    {
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
+        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create() { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(); }
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="setupInfo">
+        /// The setup info.
+        /// </param>
+        /// <returns>
+        /// A new AppDomainContext.
+        /// </returns>
+        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create(AppDomainSetup setupInfo) { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(setupInfo); }
+    }
+
+    /// <summary>
     /// Loads assemblies into the contained application domain.
     /// </summary>
-    public sealed class AppDomainContext : IAppDomainContext
+    public sealed class AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> : IAppDomainContext
+        where TAssemblyTargetLoader : MarshalByRefObject, IAssemblyTargetLoader, new()
+        where TAssemblyResolver : MarshalByRefObject, IAssemblyResolver, new()
     {
         #region Fields & Constants
 
         private readonly DisposableAppDomain wrappedDomain;
-        private readonly Remote<AssemblyTargetLoader> loaderProxy;
-        private readonly Remote<PathBasedAssemblyResolver> resolverProxy;
+        private readonly Remote<TAssemblyTargetLoader> loaderProxy;
+        private readonly Remote<TAssemblyResolver> resolverProxy;
 
         #endregion
 
@@ -34,11 +61,11 @@
         private AppDomainContext(AppDomainSetup setupInfo)
         {
             this.UniqueId = Guid.NewGuid();
-            this.AssemblyImporter = new PathBasedAssemblyResolver();
+            this.AssemblyImporter = new TAssemblyResolver();
 
             // Add some root directories to resolve some required assemblies
-            this.AssemblyImporter.AddProbePath(setupInfo.ApplicationBase);
-            this.AssemblyImporter.AddProbePath(setupInfo.PrivateBinPath);
+            this.AssemblyImporter.ApplicationBase = setupInfo.ApplicationBase;
+            this.AssemblyImporter.PrivateBinPath = setupInfo.PrivateBinPath;
 
             // Create the new domain and wrap it for disposal.
             this.wrappedDomain = new DisposableAppDomain(
@@ -50,8 +77,8 @@
             AppDomain.CurrentDomain.AssemblyResolve += this.AssemblyImporter.Resolve;
 
             // Create remotes
-            this.loaderProxy = Remote<AssemblyTargetLoader>.CreateProxy(this.wrappedDomain);
-            this.resolverProxy = Remote<PathBasedAssemblyResolver>.CreateProxy(this.wrappedDomain);
+            this.loaderProxy = Remote<TAssemblyTargetLoader>.CreateProxy(this.wrappedDomain);
+            this.resolverProxy = Remote<TAssemblyResolver>.CreateProxy(this.wrappedDomain);
 
             // Assign the resolver in the other domain (just to be safe)
             RemoteAction.Invoke(
@@ -63,8 +90,8 @@
                 });
 
             // Assign proper paths to the remote resolver
-            this.resolverProxy.RemoteObject.AddProbePath(setupInfo.ApplicationBase);
-            this.resolverProxy.RemoteObject.AddProbePath(setupInfo.PrivateBinPath);
+            this.resolverProxy.RemoteObject.ApplicationBase = setupInfo.ApplicationBase;
+            this.resolverProxy.RemoteObject.PrivateBinPath = setupInfo.PrivateBinPath;
 
             this.IsDisposed = false;
         }
@@ -132,7 +159,8 @@
                     throw new ObjectDisposedException("The AppDomain has been unloaded or disposed!");
                 }
 
-                return this.loaderProxy.RemoteObject.GetAssemblies();
+                var rValue = this.loaderProxy.RemoteObject.GetAssemblies();
+                return rValue;
             }
         }
 
@@ -149,7 +177,9 @@
         /// <returns>
         /// A new AppDomainContext.
         /// </returns>
-        public static AppDomainContext Create()
+        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TNewAssemblyTargetLoader, TNewAssemblyResolver>()
+            where TNewAssemblyTargetLoader : MarshalByRefObject, TAssemblyTargetLoader, IAssemblyTargetLoader, new()
+            where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             var guid = Guid.NewGuid();
             var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -160,7 +190,7 @@
                 PrivateBinPath = rootDir
             };
 
-            return new AppDomainContext(setupInfo) { UniqueId = guid };
+            return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(setupInfo) { UniqueId = guid };
         }
 
         /// <summary>
@@ -172,7 +202,9 @@
         /// <returns>
         /// A new AppDomainContext.
         /// </returns>
-        public static AppDomainContext Create(AppDomainSetup setupInfo)
+        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Create<TNewAssemblyTargetLoader, TNewAssemblyResolver>(AppDomainSetup setupInfo)
+            where TNewAssemblyTargetLoader : MarshalByRefObject, TAssemblyTargetLoader, IAssemblyTargetLoader, new()
+            where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             if (setupInfo == null)
             {
@@ -184,7 +216,7 @@
                 "Temp-Domain-" + guid.ToString() :
                 setupInfo.ApplicationName;
 
-            return new AppDomainContext(setupInfo) { UniqueId = guid };
+            return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(setupInfo) { UniqueId = guid };
         }
 
         /// <inheritdoc />

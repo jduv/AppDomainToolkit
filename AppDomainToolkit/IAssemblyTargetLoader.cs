@@ -7,7 +7,7 @@ namespace AppDomainToolkit
     /// wishing to keep tabs on what file specifically was loaded. This is a mirror of the IAssemblyLoader
     /// interface, except with assembly targets instead of raw reflection assemblies.
     /// </summary>
-    interface IAssemblyTargetLoader
+    public interface IAssemblyTargetLoader
     {
         #region Methods
 

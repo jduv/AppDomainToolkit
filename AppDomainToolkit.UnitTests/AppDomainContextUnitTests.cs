@@ -117,7 +117,7 @@
         [TestMethod]
         public void Dispose_WithUsingClause()
         {
-            AppDomainContext target;
+            AppDomainContext<AssemblyTargetLoader,PathBasedAssemblyResolver> target;
             using (target = AppDomainContext.Create())
             {
                 Assert.IsNotNull(target);
