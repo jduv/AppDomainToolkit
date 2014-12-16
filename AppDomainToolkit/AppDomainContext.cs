@@ -1,10 +1,11 @@
-﻿namespace AppDomainToolkit
+﻿
+namespace AppDomainToolkit
 {
     using System;
-    using System.Linq;
-    using System.IO;
-    using System.Reflection;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
     /// <summary>
     /// Loads assemblies into the contained application domain.<br/>
@@ -29,6 +30,16 @@
         /// A new AppDomainContext.
         /// </returns>
         public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Create(AppDomainSetup setupInfo) { return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Create<AssemblyTargetLoader, PathBasedAssemblyResolver>(setupInfo); }
+
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="domain">The domain to wrap in the context</param>
+        /// <returns></returns>
+        public static AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver> Wrap(AppDomain domain)
+        {
+            return AppDomainContext<AssemblyTargetLoader, PathBasedAssemblyResolver>.Wrap(domain);
+        }
     }
 
     /// <summary>
@@ -59,20 +70,32 @@
         /// The setup information.
         /// </param>
         private AppDomainContext(AppDomainSetup setupInfo)
+            : this(setupInfo, CreateDomain)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AppDomainContext class. The new AppDomainContext will wrap the given domain
+        /// </summary>
+        /// <param name="domain"></param>
+        private AppDomainContext(AppDomain domain)
+            : this(domain.SetupInformation, (_, __) => domain)
+        {
+        }
+
+        private AppDomainContext(AppDomainSetup setupInfo, Func<AppDomainSetup, string, AppDomain> createDomain)
         {
             this.UniqueId = Guid.NewGuid();
-            this.AssemblyImporter = new TAssemblyResolver();
+            this.AssemblyImporter = new TAssemblyResolver 
+            {
+                ApplicationBase = setupInfo.ApplicationBase,
+                PrivateBinPath = setupInfo.PrivateBinPath
+            };
 
             // Add some root directories to resolve some required assemblies
-            this.AssemblyImporter.ApplicationBase = setupInfo.ApplicationBase;
-            this.AssemblyImporter.PrivateBinPath = setupInfo.PrivateBinPath;
 
             // Create the new domain and wrap it for disposal.
-            this.wrappedDomain = new DisposableAppDomain(
-                AppDomain.CreateDomain(
-                    this.UniqueId.ToString(),
-                    null,
-                    setupInfo));
+            this.wrappedDomain = new DisposableAppDomain(createDomain(setupInfo, UniqueId.ToString()));
 
             AppDomain.CurrentDomain.AssemblyResolve += this.AssemblyImporter.Resolve;
 
@@ -94,6 +117,11 @@
             this.resolverProxy.RemoteObject.PrivateBinPath = setupInfo.PrivateBinPath;
 
             this.IsDisposed = false;
+        }
+
+        private static AppDomain CreateDomain(AppDomainSetup setup, string name)
+        {
+            return AppDomain.CreateDomain(name, null, setup);
         }
 
         /// <summary>
@@ -219,6 +247,21 @@
             return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(setupInfo) { UniqueId = guid };
         }
 
+        /// <summary>
+        /// Creates a new instance of the AppDomainContext class.
+        /// </summary>
+        /// <param name="domain">The appdomain to wrap.</param>
+        /// <returns>A new AppDomainContext.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver> Wrap(AppDomain domain)
+        {
+            if (domain == null)
+            {
+                throw new ArgumentNullException("domain");
+            }
+
+            return new AppDomainContext<TAssemblyTargetLoader, TAssemblyResolver>(domain);
+        }
         /// <inheritdoc />
         public void Dispose()
         {
