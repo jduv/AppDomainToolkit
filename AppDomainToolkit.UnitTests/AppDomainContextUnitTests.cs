@@ -110,6 +110,20 @@
             Assert.AreEqual(setupInfo.PrivateBinPath, target.Domain.SetupInformation.PrivateBinPath);
         }
 
+        [TestMethod]
+        public void Create_NoApplicationNameSupplied_WrappedDomain()
+        {
+            var target = AppDomainContext.Wrap(AppDomain.CurrentDomain);
+
+            Assert.IsNotNull(target);
+            Assert.IsNotNull(target.Domain);
+            Assert.IsNotNull(target.UniqueId);
+            Assert.IsNotNull(target.RemoteResolver);
+            Assert.AreEqual(AppDomain.CurrentDomain, target.Domain);
+
+            // Verify the app domain's setup info
+            Assert.IsFalse(string.IsNullOrEmpty(target.Domain.SetupInformation.ApplicationName));
+        }
         #endregion
 
         #region Dispose
