@@ -1,4 +1,6 @@
-﻿namespace AppDomainToolkit
+﻿using System.Linq;
+
+namespace AppDomainToolkit
 {
     using System;
     using System.Collections.Generic;
@@ -126,6 +128,37 @@
                 {
                     this.probePaths.Add(dir.FullName);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Removes the given probe path or semicolon separated list of probe paths from the assembly loader.
+        /// </summary>
+        /// <param name="path">The path to remove.</param>
+        public void RemoveProbePath(string path)
+        {
+            if (String.IsNullOrEmpty(path)) return;
+
+            if (path.Contains(";"))
+            {
+                var paths = path.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+
+                RemoveProbePaths(paths);
+            }
+            else RemoveProbePaths(path);
+        }
+
+        /// <summary>
+        /// Removes the given probe paths from the assembly loader.
+        /// </summary>
+        /// <param name="paths">The paths to remove.</param>
+        public void RemoveProbePaths(params string[] paths)
+        {
+            foreach (var dir in from path in paths
+                                where !String.IsNullOrEmpty(path)
+                                select new DirectoryInfo(path))
+            {
+                probePaths.Remove(dir.FullName);
             }
         }
 
