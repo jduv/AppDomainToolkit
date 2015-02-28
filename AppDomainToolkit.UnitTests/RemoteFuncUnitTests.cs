@@ -1,81 +1,95 @@
 ﻿namespace AppDomainToolkit.UnitTests
 {
     using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+
     public class RemoteFuncUnitTests
     {
         #region Test Methods
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_NullDomain()
         {
-            RemoteFunc.Invoke(null, () => { return 1; });
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 RemoteFunc.Invoke(null, () => { return 1; });
+             });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_NullFunction()
         {
-            using (var context = AppDomainContext.Create())
-            {
-                var actual = RemoteFunc.Invoke<int>(context.Domain, null);
-            }
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 using (var context = AppDomainContext.Create())
+                 {
+                     var actual = RemoteFunc.Invoke<int>(context.Domain, null);
+                 }
+             });
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_EmptyFunction()
         {
             using (var context = AppDomainContext.Create())
             {
                 var actual = RemoteFunc.Invoke(context.Domain, () => { return 1; });
-                Assert.AreEqual(1, actual);
+                Assert.Equal(1, actual);
             }
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_InstanceOneType_NullFunction()
         {
-            var action = new RemoteFunc<int>();
-            action.Invoke(null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 var action = new RemoteFunc<int>();
+                 action.Invoke(null);
+             });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_InstanceTwoTypes_NullFunction()
         {
-            var action = new RemoteFunc<int, int>();
-            action.Invoke(1, null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 var action = new RemoteFunc<int, int>();
+                 action.Invoke(1, null);
+             });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_InstanceThreeTypes_NullFunction()
         {
-            var action = new RemoteFunc<int, int, int>();
-            action.Invoke(1, 2, null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 var action = new RemoteFunc<int, int, int>();
+                 action.Invoke(1, 2, null);
+             });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_InstanceFourTypes_NullFunction()
         {
-            var action = new RemoteFunc<int, int, int, int>();
-            action.Invoke(1, 2, 3, null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 var action = new RemoteFunc<int, int, int, int>();
+                 action.Invoke(1, 2, 3, null);
+             });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void Invoke_InstanceFiveTypes_NullFunction()
         {
-            var action = new RemoteFunc<int, int, int, int, int>();
-            action.Invoke(1, 2, 3, 4, null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+             {
+                 var action = new RemoteFunc<int, int, int, int, int>();
+                 action.Invoke(1, 2, 3, 4, null);
+             });
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_Serializable_NoArguments()
         {
             using (var context = AppDomainContext.Create())
@@ -87,12 +101,12 @@
                         return new Test() { Value1 = 10 };
                     });
 
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(10, actual.Value1);
+                Assert.NotNull(actual);
+                Assert.Equal(10, actual.Value1);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_Serializable_OneArg()
         {
             using (var context = AppDomainContext.Create())
@@ -105,12 +119,12 @@
                         return new Test() { Value1 = value };
                     });
 
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(10, actual.Value1);
+                Assert.NotNull(actual);
+                Assert.Equal(10, actual.Value1);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_Serializable_TwoArg()
         {
             using (var context = AppDomainContext.Create())
@@ -124,13 +138,13 @@
                         return new Test() { Value1 = value1, Value2 = value2 };
                     });
 
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(10, actual.Value1);
-                Assert.AreEqual(11, actual.Value2);
+                Assert.NotNull(actual);
+                Assert.Equal(10, actual.Value1);
+                Assert.Equal(11, actual.Value2);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_Serializable_ThreeArg()
         {
             using (var context = AppDomainContext.Create())
@@ -145,14 +159,14 @@
                         return new Test() { Value1 = value1, Value2 = value2, Value3 = value3 };
                     });
 
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(10, actual.Value1);
-                Assert.AreEqual(11, actual.Value2);
-                Assert.AreEqual(12, actual.Value3);
+                Assert.NotNull(actual);
+                Assert.Equal(10, actual.Value1);
+                Assert.Equal(11, actual.Value2);
+                Assert.Equal(12, actual.Value3);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Invoke_Serializable_FourArg()
         {
             using (var context = AppDomainContext.Create())
@@ -168,13 +182,13 @@
                         return new Test() { Value1 = value1, Value2 = value2, Value3 = value3, Value4 = value4 };
                     });
 
-                Assert.IsNotNull(actual);
-                Assert.AreEqual(10, actual.Value1);
-                Assert.AreEqual(11, actual.Value2);
-                Assert.AreEqual(12, actual.Value3);
+                Assert.NotNull(actual);
+                Assert.Equal(10, actual.Value1);
+                Assert.Equal(11, actual.Value2);
+                Assert.Equal(12, actual.Value3);
 
-                Assert.IsNotNull(actual.Value4);
-                Assert.AreEqual(13, actual.Value4.Value);
+                Assert.NotNull(actual.Value4);
+                Assert.Equal(13, actual.Value4.Value);
             }
         }
 
