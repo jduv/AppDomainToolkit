@@ -268,49 +268,10 @@
             if (toInvoke == null)
                 throw new ArgumentNullException("toInvoke");
 
-            //return await toInvoke(arg1, arg2, arg3, arg4, arg5);
-
             var proxy = Remote<RemoteFuncAsync<T1, T2, T3, T4, T5, TResult>>.CreateProxy(domain);
             var tcs = new MarshalableTaskCompletionSource<TResult>();
-            //var t = Task.Run(() =>
-            //{
             proxy.RemoteObject.Invoke(arg1, arg2, arg3, arg4, arg5, toInvoke, tcs);
-            //});
-
-            //t.ContinueWith((tt) => { }).Unw
-
-            //t.Wait();
-            //return t;
             return tcs.Task;
-        }
-    }
-
-    /// <summary>
-    /// Marshalable TaskCompletionSource
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class MarshalableTaskCompletionSource<T> : MarshalByRefObject
-    {
-        private readonly TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
-
-        public Task<T> Task
-        {
-            get { return tcs.Task; }
-        }
-
-        public void SetResult(T result)
-        {
-            this.tcs.SetResult(result);
-        }
-
-        public void SetException(Exception[] exception)
-        {
-            this.tcs.SetException(exception);
-        }
-
-        public void SetCanceled()
-        {
-            this.tcs.SetCanceled();
         }
     }
 
@@ -342,7 +303,7 @@
                  if (t.IsCanceled)
                      tcs.SetCanceled();
                  else if (t.IsFaulted)
-                     tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                     tcs.SetException(new Exception[] { t.Exception });
                  else
                      tcs.SetResult(t.Result);
              });
@@ -385,7 +346,7 @@
                  if (t.IsCanceled)
                      tcs.SetCanceled();
                  else if (t.IsFaulted)
-                     tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                     tcs.SetException(new Exception[] { t.Exception });
                  else
                      tcs.SetResult(t.Result);
              });
@@ -432,7 +393,7 @@
                 if (t.IsCanceled)
                     tcs.SetCanceled();
                 else if (t.IsFaulted)
-                    tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                    tcs.SetException(new Exception[] { t.Exception });
                 else
                     tcs.SetResult(t.Result);
             });
@@ -485,7 +446,7 @@
                  if (t.IsCanceled)
                      tcs.SetCanceled();
                  else if (t.IsFaulted)
-                     tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                     tcs.SetException(new Exception[] { t.Exception });
                  else
                      tcs.SetResult(t.Result);
              });
@@ -545,7 +506,7 @@
                 if (t.IsCanceled)
                     tcs.SetCanceled();
                 else if (t.IsFaulted)
-                    tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                    tcs.SetException(new Exception[] { t.Exception });
                 else
                     tcs.SetResult(t.Result);
             });
@@ -611,7 +572,7 @@
                   if (t.IsCanceled)
                       tcs.SetCanceled();
                   else if (t.IsFaulted)
-                      tcs.SetException(t.Exception.InnerExceptions.ToArray());
+                      tcs.SetException(new Exception[] { t.Exception });
                   else
                       tcs.SetResult(t.Result);
               });

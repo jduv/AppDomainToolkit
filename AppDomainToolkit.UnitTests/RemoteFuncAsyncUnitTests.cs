@@ -6,7 +6,7 @@
     using AppDomainToolkit;
     using Xunit;
 
-    public class RFuncAsync
+    public class RemoteFuncAsyncUnitTests
     {
         [Fact]
         public async Task NullDomain()
@@ -292,7 +292,7 @@
         [Fact]
         public async Task Exception()
         {
-            await Assert.ThrowsAsync(typeof(Exception), async () =>
+            await Assert.ThrowsAsync(typeof(AggregateException), async () =>
             {
                 using (var context = AppDomainContext.Create())
                 {
