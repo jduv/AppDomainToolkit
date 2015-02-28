@@ -1,87 +1,95 @@
 ﻿namespace AppDomainToolkit.UnitTests
 {
     using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
+
     public class RemoteUnitTests
     {
         #region Test Method
 
         #region CreateProxy
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void CreateProxy_NullDisposableDomain()
         {
-            var target = Remote<TestProxy>.CreateProxy((DisposableAppDomain)null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+               {
+                   var target = Remote<TestProxy>.CreateProxy((DisposableAppDomain)null);
+               });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void CreateProxy_NullDomain()
         {
-            var target = Remote<TestProxy>.CreateProxy((AppDomain)null);
+            Assert.Throws(typeof(ArgumentNullException), () =>
+               {
+                   var target = Remote<TestProxy>.CreateProxy((AppDomain)null);
+               });
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateProxy_CurrentAppDomain()
         {
             var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
 
-            Assert.IsNotNull(target.Domain);
-            Assert.AreEqual(AppDomain.CurrentDomain, target.Domain);
-            Assert.IsNotNull(target.RemoteObject);
-            Assert.AreEqual(TestProxy.MundaneMessage, target.RemoteObject.Message);
+            Assert.NotNull(target.Domain);
+            Assert.Equal(AppDomain.CurrentDomain, target.Domain);
+            Assert.NotNull(target.RemoteObject);
+            Assert.Equal(TestProxy.MundaneMessage, target.RemoteObject.Message);
         }
 
-        [TestMethod]
+        [Fact]
         public void CreateProxy_CtorArguments()
         {
             var message = "Foo";
             var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain, message);
 
-            Assert.IsNotNull(target.Domain);
-            Assert.AreEqual(AppDomain.CurrentDomain, target.Domain);
-            Assert.IsNotNull(target.RemoteObject);
-            Assert.AreEqual(message, target.RemoteObject.Message);
+            Assert.NotNull(target.Domain);
+            Assert.Equal(AppDomain.CurrentDomain, target.Domain);
+            Assert.NotNull(target.RemoteObject);
+            Assert.Equal(message, target.RemoteObject.Message);
         }
 
         #endregion
 
         #region Dispose
 
-        [TestMethod]
+        [Fact]
         public void Dispose_CurrentAppDomain()
         {
             var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
             target.Dispose();
 
-            Assert.IsTrue(target.IsDisposed);
+            Assert.True(target.IsDisposed);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ObjectDisposedException))]
+        [Fact]
         public void Dispose_DomainProperty()
         {
-            var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
-            target.Dispose();
+            Assert.Throws(typeof(ObjectDisposedException), () =>
+                  {
+                      var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
+                      target.Dispose();
 
-            Assert.IsTrue(target.IsDisposed);
+                      Assert.True(target.IsDisposed);
 
-            var domain = target.Domain;
+                      var domain = target.Domain;
+                  });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ObjectDisposedException))]
+        [Fact]
         public void Dispose_RemoteObjectProperty()
         {
-            var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
-            target.Dispose();
+            Assert.Throws(typeof(ObjectDisposedException), () =>
+                   {
+                       var target = Remote<TestProxy>.CreateProxy(AppDomain.CurrentDomain);
+                       target.Dispose();
 
-            Assert.IsTrue(target.IsDisposed);
+                       Assert.True(target.IsDisposed);
 
-            var proxy = target.RemoteObject;
+                       var proxy = target.RemoteObject;
+                   });
         }
 
         #endregion
@@ -96,9 +104,9 @@
     internal class TestProxy : MarshalByRefObject
     {
         #region Fields & Constants
-        
+
         internal static readonly string MundaneMessage = "Hello World";
-        
+
         #endregion
 
         #region Constructors & Destructors
