@@ -1,93 +1,80 @@
 ﻿namespace AppDomainToolkit.UnitTests
 {
     using System;
-    using Xunit;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    [TestClass]
     public class RemoteActionUnitTests
     {
         #region Test Methods
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_NullDomain()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                RemoteAction.Invoke(null, () => { });
-            });
+            RemoteAction.Invoke(null, () => { });
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
+            using (var context = AppDomainContext.Create())
             {
-                using (var context = AppDomainContext.Create())
-                {
-                    RemoteAction.Invoke(context.Domain, null);
-                }
-            });
+                RemoteAction.Invoke(context.Domain, null);
+            }
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_InstanceNoTypes_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var action = new RemoteAction();
-                action.Invoke(null);
-            });
+            var action = new RemoteAction();
+            action.Invoke(null);
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_InstanceOneType_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var action = new RemoteAction<int>();
-                action.Invoke(1, null);
-            });
+            var action = new RemoteAction<int>();
+            action.Invoke(1, null);
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_InstanceTwoTypes_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var action = new RemoteAction<int, int>();
-                action.Invoke(1, 2, null);
-            });
+            var action = new RemoteAction<int, int>();
+            action.Invoke(1, 2, null);
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_InstanceThreeTypes_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var action = new RemoteAction<int, int, int>();
-                action.Invoke(1, 2, 3, null);
-            });
+            var action = new RemoteAction<int, int, int>();
+            action.Invoke(1, 2, 3, null);
         }
-        
-        [Fact]
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Invoke_InstanceFourTypes_NullFunction()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var action = new RemoteAction<int, int, int, int>();
-                action.Invoke(1, 2, 3, 4, null);
-            });
+            var action = new RemoteAction<int, int, int, int>();
+            action.Invoke(1, 2, 3, 4, null);
         }
-        
-        [Fact]
+
+        [TestMethod]
         public void Invoke_MarshalObjectByRef_NoArguments()
         {
             using (var context = AppDomainContext.Create())
             {
-                RemoteAction.Invoke(context.Domain, () => { });
+                RemoteAction.Invoke(context.Domain, () => {});
             }
         }
-        
-        [Fact]
+
+        [TestMethod]
         public void Invoke_MarshalObjectByRef_OneArg()
         {
             using (var context = AppDomainContext.Create())
@@ -100,13 +87,13 @@
                     {
                         test.Value1 = 10;
                     });
-                
-                Assert.NotNull(actual);
-                Assert.Equal(10, actual.Value1);
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(10, actual.Value1);
             }
         }
-        
-        [Fact]
+
+        [TestMethod]
         public void Invoke_MarshalObjectByRef_TwoArg()
         {
             using (var context = AppDomainContext.Create())
@@ -121,14 +108,14 @@
                         test.Value1 = 10;
                         test.Value2 = value2;
                     });
-                
-                Assert.NotNull(actual);
-                Assert.Equal(10, actual.Value1);
-                Assert.Equal(11, actual.Value2);
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(10, actual.Value1);
+                Assert.AreEqual(11, actual.Value2);
             }
         }
-        
-        [Fact]
+
+        [TestMethod]
         public void Invoke_MarshalObjectByRef_ThreeArg()
         {
             using (var context = AppDomainContext.Create())
@@ -145,15 +132,15 @@
                         test.Value2 = value2;
                         test.Value3 = value3;
                     });
-                
-                Assert.NotNull(actual);
-                Assert.Equal(10, actual.Value1);
-                Assert.Equal(11, actual.Value2);
-                Assert.Equal(12.0, actual.Value3);
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(10, actual.Value1);
+                Assert.AreEqual(11, actual.Value2);
+                Assert.AreEqual(12.0, actual.Value3);
             }
         }
-        
-        [Fact]
+
+        [TestMethod]
         public void Invoke_MarshalObjectByRef_FourArg()
         {
             using (var context = AppDomainContext.Create())
@@ -172,22 +159,22 @@
                         test.Value3 = value3;
                         test.Value4 = value4;
                     });
-                
-                Assert.NotNull(actual);
-                Assert.Equal(10, actual.Value1);
-                Assert.Equal(11, actual.Value2);
-                Assert.Equal(12.0, actual.Value3);
-                
-                Assert.NotNull(actual.Value4);
-                Assert.Equal(13, actual.Value4.Value);
+
+                Assert.IsNotNull(actual);
+                Assert.AreEqual(10, actual.Value1);
+                Assert.AreEqual(11, actual.Value2);
+                Assert.AreEqual(12.0, actual.Value3);
+
+                Assert.IsNotNull(actual.Value4);
+                Assert.AreEqual(13, actual.Value4.Value);
             }
         }
-        
+
         #endregion
-        
+
         #region Inner Classes
-        
-        private class Test : MarshalByRefObject
+
+        class Test : MarshalByRefObject
         {
             #region Constructors & Destructors
 
@@ -204,12 +191,13 @@
             public short Value2 { get; set; }
 
             public Double? Value3 { get; set; }
-            
+
             public Composite Value4 { get; set; }
+
             #endregion
         }
-        
-        private class Composite : MarshalByRefObject
+
+        class Composite : MarshalByRefObject
         {
             #region Constructors & Destructors
 
@@ -218,10 +206,11 @@
             }
 
             #endregion
-            
+
             #region Properties
-            
+
             public short Value { get; set; }
+
             #endregion
         }
 

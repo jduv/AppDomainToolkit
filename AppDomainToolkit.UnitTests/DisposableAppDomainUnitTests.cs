@@ -1,70 +1,69 @@
 ﻿namespace AppDomainToolkit.UnitTests
 {
     using System;
+    using System.Text;
+    using System.Collections.Generic;
     using System.Linq;
-    using Xunit;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    [TestClass]
     public class DisposableAppDomainUnitTests
     {
         #region Test Methods
 
         #region Ctor
 
-        [Fact]
+        [TestMethod]
         public void Ctor_CurrentApplicationDomain()
         {
             var target = new DisposableAppDomain(AppDomain.CurrentDomain);
 
-            Assert.NotNull(target);
-            Assert.NotNull(target.Domain);
-            Assert.False(target.IsDisposed);
+            Assert.IsNotNull(target);
+            Assert.IsNotNull(target.Domain);
+            Assert.IsFalse(target.IsDisposed);
         }
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void Ctor_NullAppDomain()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var target = new DisposableAppDomain(null);
-            });
+            var target = new DisposableAppDomain(null);
         }
 
         #endregion
 
         #region Dispose
 
-        [Fact]
+        [TestMethod]
         public void Dispose_CurrentAppDomain()
         {
             // The current app domain should NOT be unloaded, but the object should be disposed.
             var target = new DisposableAppDomain(AppDomain.CurrentDomain);
             target.Dispose();
 
-            Assert.True(target.IsDisposed);
+            Assert.IsTrue(target.IsDisposed);
         }
 
-        [Fact]
+        [TestMethod]
         public void Dispose_ValidAppDomain()
         {
             var target = new DisposableAppDomain(AppDomain.CreateDomain("My domain"));
             target.Dispose();
 
-            Assert.True(target.IsDisposed);
+            Assert.IsTrue(target.IsDisposed);
         }
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(ObjectDisposedException))]
         public void Dispose_DomainProp()
         {
-            Assert.Throws(typeof(ObjectDisposedException), () =>
-            {
-                // The current app domain should NOT be unloaded, but the object should be disposed.
-                var target = new DisposableAppDomain(AppDomain.CreateDomain("My domain"));
-                target.Dispose();
+            // The current app domain should NOT be unloaded, but the object should be disposed.
+            var target = new DisposableAppDomain(AppDomain.CreateDomain("My domain"));
+            target.Dispose();
 
-                Assert.True(target.IsDisposed);
+            Assert.IsTrue(target.IsDisposed);
 
-                var domain = target.Domain;
-            });
+            var domain = target.Domain;
         }
 
         #endregion

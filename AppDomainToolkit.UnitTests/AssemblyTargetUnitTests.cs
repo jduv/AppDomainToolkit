@@ -3,79 +3,72 @@
     using System;
     using System.IO;
     using System.Reflection;
-    using Xunit;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    [TestClass]
     public class AssemblyTargetUnitTests
     {
         #region Test Methods
 
         #region FromAssembly
 
-        [Fact]
+        [TestMethod]
         public void FromAssembly_CurrentAssembly()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var target = AssemblyTarget.FromAssembly(assembly);
 
-            Assert.NotNull(target);
-            Assert.Equal(assembly.CodeBase, target.CodeBase.ToString());
-            Assert.Equal(assembly.Location, target.Location);
-            Assert.Equal(assembly.FullName, target.FullName);
+            Assert.IsNotNull(target);
+            Assert.AreEqual(assembly.CodeBase, target.CodeBase.ToString());
+            Assert.AreEqual(assembly.Location, target.Location);
+            Assert.AreEqual(assembly.FullName, target.FullName);
         }
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void FromAssembly_NullArgument()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var target = AssemblyTarget.FromAssembly(null);
-            });
+            var target = AssemblyTarget.FromAssembly(null);
         }
 
         #endregion
 
         #region FromPath
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void FromPath_NullCodebase()
         {
-            Assert.Throws(typeof(ArgumentNullException), () =>
-            {
-                var target = AssemblyTarget.FromPath(null);
-            });
+            var target = AssemblyTarget.FromPath(null);
         }
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
         public void FromPath_NonExistingLocationExistingCodeBase()
         {
-            Assert.Throws(typeof(FileNotFoundException), () =>
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                var location = string.Format("{0}/{1}", Guid.NewGuid().ToString(), Path.GetRandomFileName());
-                var target = AssemblyTarget.FromPath(new Uri(assembly.CodeBase), location);
-            });
+            var assembly = Assembly.GetExecutingAssembly();
+            var location = Guid.NewGuid().ToString() + "/" + Path.GetRandomFileName();
+            var target = AssemblyTarget.FromPath(new Uri(assembly.CodeBase), location);
         }
 
-        [Fact]
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
         public void FromPath_NonExistingCodeBase()
         {
-            Assert.Throws(typeof(FileNotFoundException), () =>
-            {
-                var location = Path.GetFullPath(string.Format("{0}/{1}", Guid.NewGuid().ToString(), Path.GetRandomFileName()));
-                var target = AssemblyTarget.FromPath(new Uri(location));
-            });
+            var location = Path.GetFullPath(Guid.NewGuid().ToString() + "/" + Path.GetRandomFileName());
+            var target = AssemblyTarget.FromPath(new Uri(location));
         }
 
-        [Fact]
+        [TestMethod]
         public void FromPath_CurrentAssembly()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var target = AssemblyTarget.FromPath(new Uri(assembly.CodeBase), assembly.Location, assembly.FullName);
 
-            Assert.NotNull(target);
-            Assert.Equal(assembly.CodeBase, target.CodeBase.ToString());
-            Assert.Equal(assembly.Location, target.Location);
-            Assert.Equal(assembly.FullName, target.FullName);
+            Assert.IsNotNull(target);
+            Assert.AreEqual(assembly.CodeBase, target.CodeBase.ToString());
+            Assert.AreEqual(assembly.Location, target.Location);
+            Assert.AreEqual(assembly.FullName, target.FullName);
         }
 
         #endregion
