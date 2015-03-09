@@ -11,7 +11,7 @@ namespace AppDomainToolkit
     /// Loads assemblies into the contained application domain.<br/>
     /// No-hassle wrapper for creating default instances of <see cref="AppDomainToolkit.AppDomainContext&lt;TAssemblyTargetLoader, TAssemblyResolver&gt;" />
     /// </summary>
-    public sealed class AppDomainContext
+    public sealed class AppDomainContext 
     {
         /// <summary>
         /// Creates a new instance of the AppDomainContext class.
@@ -86,16 +86,11 @@ namespace AppDomainToolkit
         private AppDomainContext(AppDomainSetup setupInfo, Func<AppDomainSetup, string, AppDomain> createDomain)
         {
             this.UniqueId = Guid.NewGuid();
-            this.AssemblyImporter = new TAssemblyResolver
+            this.AssemblyImporter = new TAssemblyResolver 
             {
                 ApplicationBase = setupInfo.ApplicationBase,
                 PrivateBinPath = setupInfo.PrivateBinPath
             };
-
-            // Retreive parent AppDomain missing info with XUnit
-            setupInfo.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            setupInfo.ApplicationName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
-            setupInfo.ApplicationTrust = AppDomain.CurrentDomain.SetupInformation.ApplicationTrust;
 
             // Add some root directories to resolve some required assemblies
 
