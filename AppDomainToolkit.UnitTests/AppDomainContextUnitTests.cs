@@ -54,7 +54,7 @@
         [Fact]
         public void Create_ValidSetupInfo()
         {
-            var workingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var workingDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
             var setupInfo = new AppDomainSetup()
             {
                 ApplicationName = "My app",
@@ -79,7 +79,7 @@
         [Fact]
         public void Create_NoApplicationNameSupplied()
         {
-            var workingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var workingDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
             var setupInfo = new AppDomainSetup()
             {
                 ApplicationBase = workingDir,

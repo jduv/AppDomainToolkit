@@ -8,6 +8,11 @@
 
     public class RemoteFuncAsyncUnitTests
     {
+        static RemoteFuncAsyncUnitTests()
+        {
+            
+        }
+
         [Fact]
         public async Task NullDomain()
         {

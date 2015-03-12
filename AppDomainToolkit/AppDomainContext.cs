@@ -91,14 +91,8 @@ namespace AppDomainToolkit
                 ApplicationBase = setupInfo.ApplicationBase,
                 PrivateBinPath = setupInfo.PrivateBinPath
             };
-
-            // Retreive parent AppDomain missing info with XUnit
-            setupInfo.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            setupInfo.ApplicationName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
-            setupInfo.ApplicationTrust = AppDomain.CurrentDomain.SetupInformation.ApplicationTrust;
-
+ 
             // Add some root directories to resolve some required assemblies
-
             // Create the new domain and wrap it for disposal.
             this.wrappedDomain = new DisposableAppDomain(createDomain(setupInfo, UniqueId.ToString()));
 
@@ -215,7 +209,10 @@ namespace AppDomainToolkit
             where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             var guid = Guid.NewGuid();
-            var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            //string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string rootDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+
             var setupInfo = new AppDomainSetup()
             {
                 ApplicationName = "Temp-Domain-" + guid,
