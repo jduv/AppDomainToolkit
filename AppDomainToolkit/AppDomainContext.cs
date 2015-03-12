@@ -93,7 +93,6 @@ namespace AppDomainToolkit
             };
 
             // Add some root directories to resolve some required assemblies
-
             // Create the new domain and wrap it for disposal.
             this.wrappedDomain = new DisposableAppDomain(createDomain(setupInfo, UniqueId.ToString()));
 
@@ -210,7 +209,10 @@ namespace AppDomainToolkit
             where TNewAssemblyResolver : MarshalByRefObject, TAssemblyResolver, IAssemblyResolver, new()
         {
             var guid = Guid.NewGuid();
-            var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            //string rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string rootDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+
             var setupInfo = new AppDomainSetup()
             {
                 ApplicationName = "Temp-Domain-" + guid,
