@@ -34,6 +34,9 @@
         /// <inheritdoc />
         public string FullName { get; private set; }
 
+        /// <inheritdoc />
+        public bool IsDynamic { get; private set; }
+
         #endregion
 
         #region Public Methods
@@ -54,8 +57,15 @@
                 throw new ArgumentNullException("assembly");
             }
 
-            var uri = new Uri(assembly.CodeBase);
-            return FromPath(uri, assembly.Location, assembly.FullName);
+            if (assembly.IsDynamic)
+            {
+                return FromDynamic(assembly.FullName);
+            }
+            else
+            {
+                var uri = new Uri(assembly.CodeBase);
+                return FromPath(uri, assembly.Location, assembly.FullName);
+            }
         }
 
         /// <summary>
@@ -77,7 +87,7 @@
         {
             if (codebase == null)
             {
-                throw new ArgumentNullException("Codebase URI cannot be null!");
+                throw new ArgumentNullException("codebase", "Codebase URI cannot be null!");
             }
 
             if (!File.Exists(codebase.LocalPath))
@@ -94,7 +104,33 @@
             {
                 CodeBase = codebase,
                 Location = location,
-                FullName = fullname
+                FullName = fullname,
+                IsDynamic = false,
+            };
+        }
+
+        /// <summary>
+        /// Creates a new assembly target for the given dynamic assembly.
+        /// </summary>
+        /// <param name="fullName">
+        /// The full name of the assembly.
+        /// </param>
+        /// <returns>
+        /// An AssemblyTarget.
+        /// </returns>
+        public static IAssemblyTarget FromDynamic(string fullName)
+        {
+            if (fullName == null)
+            {
+                throw new ArgumentNullException("fullName", "FullName cannot be null!");
+            }
+
+            return new AssemblyTarget()
+            {
+                CodeBase = null,
+                Location = null,
+                FullName = fullName,
+                IsDynamic = true
             };
         }
 

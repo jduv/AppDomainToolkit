@@ -12,11 +12,13 @@ namespace AppDomainToolkit
 
         /// <summary>
         /// Gets the location of the code base on disk.
+        /// Can be null if the assembly is dynamic
         /// </summary>
         Uri CodeBase { get; }
 
         /// <summary>
         /// Gets the location of the assembly, if applicable.
+        /// Can be null if the assembly is dynamic
         /// </summary>
         string Location { get; }
 
@@ -24,6 +26,12 @@ namespace AppDomainToolkit
         /// Gets the full name of the assembly target.
         /// </summary>
         string FullName { get; }
+
+        /// <summary>
+        /// Indicates if the assembly is dynamic.
+        /// If true, CodeBase and Location will be null.
+        /// </summary>
+        bool IsDynamic { get; }
 
         #endregion
     }
