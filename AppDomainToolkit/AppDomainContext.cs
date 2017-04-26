@@ -192,6 +192,24 @@ namespace AppDomainToolkit
         }
 
         /// <inheritdoc />
+        /// <remarks>
+        /// This property hits the remote AppDomain each time you ask for it, so don't call this in a
+        /// tight loop unless you like slow code.
+        /// </remarks>
+        public IEnumerable<IAssemblyTarget> ReflectionOnlyLoadedAssemblies
+        {
+            get
+            {
+                if (this.IsDisposed)
+                {
+                    throw new ObjectDisposedException("The AppDomain has been unloaded or disposed!");
+                }
+
+                var rValue = this.loaderProxy.RemoteObject.ReflectionOnlyGetAssemblies();
+                return rValue;
+            }
+        }
+        /// <inheritdoc />
         public bool IsDisposed { get; private set; }
 
         #endregion
@@ -326,6 +344,21 @@ namespace AppDomainToolkit
             var previousLoadMethod = this.resolverProxy.RemoteObject.LoadMethod;
             this.resolverProxy.RemoteObject.LoadMethod = loadMethod;
             var target = this.loaderProxy.RemoteObject.LoadAssembly(loadMethod, path, pdbPath);
+            this.resolverProxy.RemoteObject.LoadMethod = previousLoadMethod;
+            return target;
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// In order to ensure that the assembly is loaded the way the caller expects, the LoadMethod property of
+        /// the remote domain assembly resolver will be temporarily set to the value of <paramref name="loadMethod"/>.
+        /// It will be reset to the original value after the load is complete.
+        /// </remarks>
+        public IAssemblyTarget ReflectionOnlyLoadAssembly(LoadMethod loadMethod, string path)
+        {
+            var previousLoadMethod = this.resolverProxy.RemoteObject.LoadMethod;
+            this.resolverProxy.RemoteObject.LoadMethod = loadMethod;
+            var target = this.loaderProxy.RemoteObject.ReflectionOnlyLoadAssembly(loadMethod, path);
             this.resolverProxy.RemoteObject.LoadMethod = previousLoadMethod;
             return target;
         }

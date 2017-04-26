@@ -31,6 +31,21 @@ namespace AppDomainToolkit
         IAssemblyTarget LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null);
 
         /// <summary>
+        /// Loads the target assembly for reflection only with the indicated load method 
+        /// into the current application domain and returns an assembly target.
+        /// </summary>
+        /// <param name="loadMethod">
+        /// The load method to use. 
+        /// </param>
+        /// <param name="assemblyPath">
+        /// The path to the assembly to load.
+        /// </param>
+        /// <returns>
+        /// An assembly target pointing to the target assembly.
+        /// </returns>
+        IAssemblyTarget ReflectionOnlyLoadAssembly(LoadMethod loadMethod, string assemblyPath);
+
+        /// <summary>
         /// Lads the target assembly with all of it's referencings and corresponding PDB files if they exist. This
         /// should perform a best effor guess as to where these assemblies should life, and it should load the
         /// assemblies into the current application domain and return an assembly target pointing to the original
@@ -54,6 +69,14 @@ namespace AppDomainToolkit
         /// An array of AssemblyTargets.
         /// </returns>
         IAssemblyTarget[] GetAssemblies();
+
+        /// <summary>
+        /// Gets a list of all the assemblies loaded into the current application domain.
+        /// </summary>
+        /// <returns>
+        /// An array of AssemblyTargets.
+        /// </returns>
+        IAssemblyTarget[] ReflectionOnlyGetAssemblies();
 
         #endregion
     }

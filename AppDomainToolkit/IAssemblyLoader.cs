@@ -32,6 +32,21 @@
         Assembly LoadAssembly(LoadMethod loadMethod, string assemblyPath, string pdbPath = null);
 
         /// <summary>
+        /// Loads the target assembly for reflection only with the indicated load method into the current application domain
+        /// and returns it.
+        /// </summary>
+        /// <param name="loadMethod">
+        /// The load method to use.
+        /// </param>
+        /// <param name="assemblyPath">
+        /// The path to the assembly to load.
+        /// </param>
+        /// <returns>
+        /// The target assembly.
+        /// </returns>
+        Assembly ReflectionOnlyLoadAssembly(LoadMethod loadMethod, string assemblyPath);
+
+        /// <summary>
         /// Loads the target assembly along with all of it's references and corresponding PDB files if they exist.
         /// This should perform a best effort guess as to where these assemblies should live, and it should
         /// load these assemblies into the current application domain and return the original assembly at
@@ -55,6 +70,14 @@
         /// An array of assemblies.
         /// </returns>
         Assembly[] GetAssemblies();
+
+        /// <summary>
+        /// Gets an array of all the assemblies currently loaded into the current application domain.
+        /// </summary>
+        /// <returns>
+        /// An array of assemblies.
+        /// </returns>
+        Assembly[] ReflectionOnlyGetAssemblies();
 
         #endregion
     }
