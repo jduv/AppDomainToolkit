@@ -55,6 +55,25 @@
         }
 
         /// <inheritdoc/>
+        public IAssemblyTarget ReflectionOnlyLoadAssembly(LoadMethod loadMethod, string assemblyPath)
+        {
+            IAssemblyTarget target = null;
+            var assembly = this.loader.ReflectionOnlyLoadAssembly(loadMethod, assemblyPath);
+            if (loadMethod == LoadMethod.LoadBits)
+            {
+                // Assemlies loaded by bits will have the codebase set to the assembly that loaded it. Set it to the correct path here.
+                var codebaseUri = new Uri(assemblyPath);
+                target = AssemblyTarget.FromPath(codebaseUri, assembly.Location, assembly.FullName);
+            }
+            else
+            {
+                target = AssemblyTarget.FromAssembly(assembly);
+            }
+
+            return target;
+        }
+
+        /// <inheritdoc/>
         public IList<IAssemblyTarget> LoadAssemblyWithReferences(LoadMethod loadMethod, string assemblyPath)
         {
             return this.loader.LoadAssemblyWithReferences(loadMethod, assemblyPath).Select(x => AssemblyTarget.FromAssembly(x)).ToList();
@@ -64,6 +83,13 @@
         public IAssemblyTarget[] GetAssemblies()
         {
             var assemblies = this.loader.GetAssemblies();
+            return assemblies.Select(x => AssemblyTarget.FromAssembly(x)).ToArray();
+        }
+
+        /// <inheritdoc />
+        public IAssemblyTarget[] ReflectionOnlyGetAssemblies()
+        {
+            var assemblies = this.loader.ReflectionOnlyGetAssemblies();
             return assemblies.Select(x => AssemblyTarget.FromAssembly(x)).ToArray();
         }
 

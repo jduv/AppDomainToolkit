@@ -91,6 +91,30 @@
             return assembly;
         }
 
+        /// <inheritdoc /> 
+        /// <remarks>
+        /// LoadMethod.LoadFile is not supported. See LoadAssembly for more details.
+        /// </remarks>
+        public Assembly ReflectionOnlyLoadAssembly(LoadMethod loadMethod, string assemblyPath)
+        {
+            Assembly assembly = null;
+            switch (loadMethod)
+            {
+                case LoadMethod.LoadFrom:
+                    assembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                    break;
+                case LoadMethod.LoadFile:
+                    throw new NotSupportedException("The target load method isn't supported!");
+                case LoadMethod.LoadBits:
+                    assembly = Assembly.ReflectionOnlyLoad(File.ReadAllBytes(assemblyPath));
+                    break;
+                default:
+                    // In case we upadate the enum but forget to update this logic.
+                    throw new NotSupportedException("The target load method isn't supported!");
+            }
+
+            return assembly;
+        }
         /// <inheritdoc />
         /// <remarks>
         /// This implementation will perform a best-effort load of the target assembly and it's required references
@@ -119,6 +143,15 @@
         public Assembly[] GetAssemblies()
         {
             return AppDomain.CurrentDomain.GetAssemblies();
+        }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Just a simple call to AppDomain.CurrentDomain.GetAssemblies(), nothing more.
+        /// </remarks>
+        public Assembly[] ReflectionOnlyGetAssemblies()
+        {
+            return AppDomain.CurrentDomain.ReflectionOnlyGetAssemblies();
         }
 
         #endregion

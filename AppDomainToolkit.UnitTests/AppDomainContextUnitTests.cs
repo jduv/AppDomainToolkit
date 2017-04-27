@@ -161,6 +161,18 @@
                 var assemblies = target.LoadedAssemblies;
             });
         }
+
+        public void Dispose_ReflectionOnlyLoadedAssembliesProperty()
+        {
+            Assert.Throws(typeof(ObjectDisposedException), () =>
+            {
+                var target = AppDomainContext.Create();
+                target.Dispose();
+
+                Assert.True(target.IsDisposed);
+                var assemblies = target.ReflectionOnlyLoadedAssemblies;
+            });
+        }
         
         [Fact]
         public void Dispose_RemoteResolverPropery()
@@ -456,7 +468,48 @@
         }
         
         #endregion
-        
+
+        #region ReflectionOnlyLoadAssembly
+
+        [Fact]
+        public void ReflectionOnlyLoadAssembly_NoRefAssembly_LoadFile()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var codebaseUri = new Uri(targetPath);
+                Exception ex = Assert.Throws<NotSupportedException>(()=>context.ReflectionOnlyLoadAssembly(LoadMethod.LoadFile, targetPath));
+                Assert.True(ex != null);
+            }
+        }
+
+        [Fact]
+        public void ReflectionOnlyLoadAssembly_NoRefAssembly_LoadFrom()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var codebaseUri = new Uri(targetPath);
+                context.ReflectionOnlyLoadAssembly(LoadMethod.LoadFrom, targetPath);
+                Assert.True(context.ReflectionOnlyLoadedAssemblies.Any(x => x.CodeBase.Equals(codebaseUri.ToString())));
+            }
+        }
+
+        [Fact]
+        public void ReflectionOnlyLoadAssembly_NoRefAssembly_LoadBits()
+        {
+            using (var context = AppDomainContext.Create())
+            {
+                var targetPath = Path.GetFullPath(NoRefsAssemblyPath);
+                var codebaseUri = new Uri(targetPath);
+                var target = context.ReflectionOnlyLoadAssembly(LoadMethod.LoadBits, targetPath);
+                Assert.True(context.ReflectionOnlyLoadedAssemblies.Any(x => x.FullName.Equals(target.FullName)));
+            }
+        }
+
+
+
+        #endregion
         #region LoadAssemblyWithReferences
         
         [Fact]

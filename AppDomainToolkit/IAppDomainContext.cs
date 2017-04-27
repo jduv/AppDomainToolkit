@@ -32,6 +32,8 @@
         /// </summary>
         IEnumerable<IAssemblyTarget> LoadedAssemblies { get; }
 
+        IEnumerable<IAssemblyTarget> ReflectionOnlyLoadedAssemblies { get; }
+
         #endregion
 
         #region Methods
