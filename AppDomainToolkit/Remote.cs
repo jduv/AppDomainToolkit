@@ -110,15 +110,18 @@
 
             var type = typeof(T);
 
-            var proxy = (T)wrappedDomain.Domain.CreateInstanceAndUnwrap(
-                type.Assembly.FullName,
+            var proxyHandle = Activator.CreateInstance(
+                wrappedDomain.Domain,
+                type.Assembly.GetName().Name,
                 type.FullName,
                 false,
-                BindingFlags.CreateInstance,
+                BindingFlags.CreateInstance, 
                 null,
                 constructorArgs,
                 null,
                 null);
+
+            var proxy = (T) proxyHandle.Unwrap();
 
             return new Remote<T>(wrappedDomain, proxy);
         }
